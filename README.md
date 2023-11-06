@@ -285,7 +285,7 @@ if isDirectLake == "Yes":
         index2 = e.Expression.find(".net\"") + 4
         sqlendpoint = e.Expression[index:index2]
         print("SQL Endpoint: " + sqlendpoint)
-        index3 = e.Expression.find(",")+3
+        index3 = e.Expression.find(",") + 3
         index4 = e.Expression.find("\")")
         lakehouseName = e.Expression[index3:index4]
         print("Lakehouse: " + lakehouseName)
