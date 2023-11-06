@@ -1,6 +1,8 @@
 # Fabric
 The following code snippets may be executed in a [Microsoft Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook). These scripts leverage the Semantic-Link (a.k.a. Sempy) library.
 
+This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic-Link (Sempy) library.
+
 #### Load the [Semantic Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
 %pip install semantic-link
@@ -45,40 +47,41 @@ x
 #### Shows a list of your accessible workspaces, sorted alphabetically
 ```python
 import sempy.fabric as fabric
-df = fabric._list_workspaces().sort_values(by='Name')
-df
+x = fabric._list_workspaces().sort_values(by='Name')
+x
 ```
 
 #### Filter to a particular workspace
 ```python
 import sempy.fabric as fabric
 workspaceName = "MK Demo 4" #Enter the workspace name to be used as a filter
-df = fabric._list_workspaces()
+x = fabric._list_workspaces()
 filter_condition = [workspaceName]
-df = df[df['Name'].isin(filter_condition)]
-df
+x = x[x['Name'].isin(filter_condition)]
+x
 ```
 
 #### Find the workspace ID for a given workspace name
 ```python
 import sempy.fabric as fabric
-workspaceID = fabric.resolve_workspace_id(workspaceName)
-workspaceID
+x = "" #Enter the workspace name
+id = fabric.resolve_workspace_id(x)
+id
 ```
 
 #### Find the workspace name for a given workspace ID
 ```python
 import sempy.fabric as fabric
-workspaceID = "" #Enter the workspace ID
-workspaceName = fabric.resolve_workspace_name(workspaceID)
-workspaceName
+id = "" #Enter the workspace ID
+x = fabric.resolve_workspace_name(workspaceID)
+x
 ```
 
 #### Get the current workspace ID
 ```python
 import sempy.fabric as fabric
-workspaceID = fabric.get_workspace_id()
-workspaceID
+x = fabric.get_workspace_id()
+x
 ```
 
 ## Dataset and dataset objects
@@ -103,40 +106,40 @@ print(x)
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df = fabric.list_tables(datasetName)
-df
+x = fabric.list_tables(datasetName)
+x
 ```
 
 #### List the columns within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df = fabric.list_tables(datasetName, True)
-df
+x = fabric.list_tables(datasetName, True)
+x
 ```
 
 #### List the partitions within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df = fabric.list_tables(datasetName, False, True)
-df
+x = fabric.list_tables(datasetName, False, True)
+x
 ```
 
 #### List the measures within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df = fabric.list_measures(datasetName)
-df
+x = fabric.list_measures(datasetName)
+x
 ```
 
 #### List the relationships within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df = fabric.list_relationships(datasetName)
-df
+x = fabric.list_relationships(datasetName)
+x
 ```
 
 #### Plot the relationships for a given dataset (semantic model)
@@ -172,7 +175,7 @@ for t in m.Tables:
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df = fabric.evaluate_dax(
+x = fabric.evaluate_dax(
     datasetName,
     """
     EVALUATE
@@ -181,14 +184,14 @@ df = fabric.evaluate_dax(
     )
     """
     )
-df
+x
 ```
 
 #### Run [Dynamic Management Views](https://learn.microsoft.com/analysis-services/instances/use-dynamic-management-views-dmvs-to-monitor-analysis-services?view=asallproducts-allversions) (DMVs) via evaluate_dax()
 ```python
 import sempy.fabric as fabric
 datasetName = ""
-df = fabric.evaluate_dax(
+x = fabric.evaluate_dax(
         datasetName,
         """
         SELECT
@@ -204,17 +207,17 @@ df = fabric.evaluate_dax(
         AND NOT [ISROWNUMBER]
         ORDER BY [DICTIONARY_TEMPERATURE] DESC
         """)
-df
+x
 ```
 
 #### Run a single measure against 1+ columns in your dataset
 ```python
 import sempy.fabric as fabric
-df = fabric.evaluate_measure(
+x = fabric.evaluate_measure(
     "DatasetName", #Enter your dataset name
     "MeasureName", #Enter the measure name from your dataset   
     ["'TableName'[ColumnName]", "TableName[ColumnName]"]) # Enter columns
-df
+x
 ```
 
 #### Enable DAX cell magic (ability to run DAX directly in a notebook cell using %%dax)
