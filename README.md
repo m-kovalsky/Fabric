@@ -8,8 +8,8 @@ This repo is intended to help business intelligence analysts/developers and data
 %pip install semantic-link
 ```
 
-### Loading Semantic-Link into a custom Fabric environment
-An even better way to ensure the Semantic-Link library is available in your workspace/notebooks is to load it as a library in ac custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow these steps to create an environment and load the Semantic-Link library.
+## Loading Semantic-Link into a custom Fabric environment
+An even better way to ensure the Semantic-Link library is available in your workspace/notebooks is to load it as a library in ac custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow the steps below to create an environment and load the Semantic-Link library.
 
 #### Create a custom environment
 1. Navigate to your Fabric workspace
