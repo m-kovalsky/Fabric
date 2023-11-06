@@ -14,7 +14,7 @@ An even better way to ensure the Semantic-Link library is available in your work
 #### Create a custom environment
 1. Navigate to your Fabric workspace
 2. Click 'New' -> More options
-3. Within 'Data Science', click 'Envionment'
+3. Within 'Data Science', click 'Environment'
 4. Name your environment, click 'Create'
 
 #### Add Semantic-Link as a library to the environment
