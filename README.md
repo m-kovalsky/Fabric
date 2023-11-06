@@ -63,7 +63,7 @@ df = fabric._list_workspaces().sort_values(by='Name')
 df
 ```
 
-#### Find a particular workspace
+#### Filter to a particular workspace
 ```python
 import sempy.fabric as fabric
 workspaceName = "MK Demo 4" #Enter the workspace name to be used as a filter
