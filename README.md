@@ -309,7 +309,10 @@ for t in m.Tables:
         if str(p.Mode) == "DirectLake":
             isDirectLake = "Yes"
 
-print(isDirectLake)
+if isDirectLake == "No":
+    print(isDirectLake + ", this model is not in DirectLake mode")
+else:
+    print(isDirectLake + ", this model is in DirectLake mode")
 
 if isDirectLake == "Yes":
     for e in m.Expressions:
