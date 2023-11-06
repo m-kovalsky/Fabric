@@ -190,7 +190,7 @@ x
 #### Run [Dynamic Management Views](https://learn.microsoft.com/analysis-services/instances/use-dynamic-management-views-dmvs-to-monitor-analysis-services?view=asallproducts-allversions) (DMVs) via evaluate_dax()
 ```python
 import sempy.fabric as fabric
-datasetName = ""
+datasetName = "" #Enter dataset name
 x = fabric.evaluate_dax(
         datasetName,
         """
