@@ -47,7 +47,7 @@ x
 #### Shows a list of your accessible workspaces, sorted alphabetically
 ```python
 import sempy.fabric as fabric
-x = fabric._list_workspaces().sort_values(by='Name')
+x = fabric._list_workspaces().sort_values(by='Name', ascending=True)
 x
 ```
 
