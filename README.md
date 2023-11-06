@@ -161,7 +161,17 @@ datasetName = "" #Enter dataset name
 relationships = fabric.list_relationships(datasetName)
 plot_relationship_metadata(relationships)
 ```
+## Read data from dataset
 
+#### Show a preview of the data in a given table from a dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+tableName = "" #Enter table name
+rowLimit = 100
+x = fabric.read_table(datasetName,tableName,False,rowLimit)
+x
+```
 ## Tabular Object Model
 
 #### Connect to the [Tabular Object Model](https://learn.microsoft.com/analysis-services/tom/introduction-to-the-tabular-object-model-tom-in-analysis-services-amo?view=asallproducts-allversions) ([TOM](https://learn.microsoft.com/dotnet/api/microsoft.analysisservices.tabular.model?view=analysisservices-dotnet)); prints each table name
