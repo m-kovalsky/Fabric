@@ -61,6 +61,18 @@ x = x[x['Name'].isin(filter_condition)]
 x
 ```
 
+#### Filter to a particular workspace and extract the value
+```python
+import sempy.fabric as fabric
+workspaceName = "" #Enter the workspace name to be used as a filter
+x = fabric._list_workspaces()
+filter_condition = [workspaceName]
+x = x[x['Name'].isin(filter_condition)]
+y = x["Id"].values[0]
+z = fabric.resolve_workspace_name(y)
+z
+```
+
 #### Find the workspace ID for a given workspace name
 ```python
 import sempy.fabric as fabric
