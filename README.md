@@ -26,6 +26,8 @@ import sempy.fabric as fabric
 help(fabric.list_datasets) # replace 'list_datasets' within any function shown in the dir(sempy.fabric) output
 ```
 
+## Workspace/Lakehouse objects
+
 #### Gets the Lakehouse ID from the current lakehouse
 ```python
 import sempy.fabric as fabric
@@ -38,22 +40,6 @@ x
 import sempy.fabric as fabric
 x = fabric.get_artifact_id()
 x
-```
-
-#### Shows a list of datasets in your current workspace
-```python
-import sempy.fabric as fabric
-x = fabric.list_datasets()
-x
-```
-
-#### Shows the [TMSL](https://learn.microsoft.com/analysis-services/tmsl/tabular-model-scripting-language-tmsl-reference?view=asallproducts-allversions) for a given dataset
-```python
-import sempy.fabric as fabric
-datasetName = "" #Enter your dataset name
-workspaceName = "" #Enter your workspace name
-x = fabric.get_tmsl(datasetName, workspaceName)
-print(x)
 ```
 
 #### Shows a list of your accessible workspaces, sorted alphabetically
@@ -93,6 +79,24 @@ workspaceName
 import sempy.fabric as fabric
 workspaceID = fabric.get_workspace_id()
 workspaceID
+```
+
+## Dataset and dataset objects
+
+#### Shows a list of datasets in your current workspace
+```python
+import sempy.fabric as fabric
+x = fabric.list_datasets()
+x
+```
+
+#### Shows the [TMSL](https://learn.microsoft.com/analysis-services/tmsl/tabular-model-scripting-language-tmsl-reference?view=asallproducts-allversions) for a given dataset
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter your dataset name
+workspaceName = "" #Enter your workspace name
+x = fabric.get_tmsl(datasetName, workspaceName)
+print(x)
 ```
 
 #### List the tables within a given dataset (semantic model)
@@ -143,6 +147,8 @@ relationships = fabric.list_relationships(datasetName)
 plot_relationship_metadata(relationships)
 ```
 
+## Tabular Object Model
+
 #### Connect to the [Tabular Object Model](https://learn.microsoft.com/analysis-services/tom/introduction-to-the-tabular-object-model-tom-in-analysis-services-amo?view=asallproducts-allversions) ([TOM](https://learn.microsoft.com/dotnet/api/microsoft.analysisservices.tabular.model?view=analysisservices-dotnet)); prints each table name
 ```python
 import sempy.fabric as fabric
@@ -160,3 +166,76 @@ for t in m.Tables:
 	print(t.Name)
 ```
 
+## DAX
+
+#### Run DAX via evaluate_dax()
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+df_dax = fabric.evaluate_dax(
+    datasetName,
+    """
+    EVALUATE
+    SUMMARIZECOLUMNS(
+    "Header Name",[Measure Name]
+    )
+    """
+    )
+df_dax
+```
+
+#### Run [Dynamic Management Views](https://learn.microsoft.com/analysis-services/instances/use-dynamic-management-views-dmvs-to-monitor-analysis-services?view=asallproducts-allversions) (DMVs) via evaluate_dax()
+```python
+import sempy.fabric as fabric
+datasetName = ""
+df_dax = fabric.evaluate_dax(
+        datasetName,
+        """
+        SELECT
+        MEASURE_GROUP_NAME AS [TableName]
+        ,ATTRIBUTE_NAME AS [ColumnName]
+        ,DATATYPE AS [DataType]
+        ,DICTIONARY_SIZE AS [DictionarySize]
+        ,DICTIONARY_ISRESIDENT AS [IsResident]
+        ,DICTIONARY_TEMPERATURE AS [Temperature]
+        ,DICTIONARY_LAST_ACCESSED AS [LastAccessed]
+        FROM $SYSTEM.DISCOVER_STORAGE_TABLE_COLUMNS
+        WHERE [COLUMN_TYPE] = 'BASIC_DATA'
+        AND NOT [ISROWNUMBER]
+        ORDER BY [DICTIONARY_TEMPERATURE] DESC
+        """)
+df_dax
+```
+
+#### Run a single measure against 1+ columns in your dataset
+```python
+import sempy.fabric as fabric
+df = fabric.evaluate_measure(
+    "DatasetName", #Enter your dataset name
+    "MeasureName", #Enter the measure name from your dataset   
+    ["'TableName'[ColumnName]", "TableName[ColumnName]"]) # Enter columns
+df
+```
+
+#### Enable DAX cell magic (ability to run DAX directly in a notebook cell using %%dax)
+```python
+import sempy.fabric as fabric
+%load_ext sempy
+```
+
+#### Run DAX using DAX cell magic
+```python
+%%dax "DatasetName" -w "WorkspaceName" # Enter DatasetName & WorkspaceName 
+
+EVALUATE
+SUMMARIZECOLUMNS(
+"Header Name",[Measure Name]
+)
+```
+
+#### Run [Dynamic Management Views](https://learn.microsoft.com/analysis-services/instances/use-dynamic-management-views-dmvs-to-monitor-analysis-services?view=asallproducts-allversions) (DMVs) using DAX cell magic
+```python
+%%dax "DatasetName" -w "WorkspaceName" # Enter DatasetName & WorkspaceName 
+
+SELECT * FROM $SYSTEM.DISCOVER_SESSIONS
+```
