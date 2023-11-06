@@ -54,7 +54,7 @@ x
 #### Filter to a particular workspace
 ```python
 import sempy.fabric as fabric
-workspaceName = "MK Demo 4" #Enter the workspace name to be used as a filter
+workspaceName = "" #Enter the workspace name to be used as a filter
 x = fabric._list_workspaces()
 filter_condition = [workspaceName]
 x = x[x['Name'].isin(filter_condition)]
