@@ -172,7 +172,7 @@ for t in m.Tables:
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-df_dax = fabric.evaluate_dax(
+df = fabric.evaluate_dax(
     datasetName,
     """
     EVALUATE
@@ -181,14 +181,14 @@ df_dax = fabric.evaluate_dax(
     )
     """
     )
-df_dax
+df
 ```
 
 #### Run [Dynamic Management Views](https://learn.microsoft.com/analysis-services/instances/use-dynamic-management-views-dmvs-to-monitor-analysis-services?view=asallproducts-allversions) (DMVs) via evaluate_dax()
 ```python
 import sempy.fabric as fabric
 datasetName = ""
-df_dax = fabric.evaluate_dax(
+df = fabric.evaluate_dax(
         datasetName,
         """
         SELECT
@@ -204,7 +204,7 @@ df_dax = fabric.evaluate_dax(
         AND NOT [ISROWNUMBER]
         ORDER BY [DICTIONARY_TEMPERATURE] DESC
         """)
-df_dax
+df
 ```
 
 #### Run a single measure against 1+ columns in your dataset
