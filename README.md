@@ -219,7 +219,6 @@ df
 
 #### Enable DAX cell magic (ability to run DAX directly in a notebook cell using %%dax)
 ```python
-import sempy.fabric as fabric
 %load_ext sempy
 ```
 
