@@ -47,7 +47,7 @@ dir(sempy.fabric)
 #### Show useful information about a given function
 ```python
 import sempy.fabric as fabric
-help(fabric.list_datasets) # replace 'list_datasets' within any function shown in the dir(sempy.fabric) output
+help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in the dir(sempy.fabric) output
 ```
 
 ## Workspace/Lakehouse objects
