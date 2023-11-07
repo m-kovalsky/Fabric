@@ -1,9 +1,9 @@
 # Fabric
-The following code snippets may be executed in a [Microsoft Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook). These scripts leverage the Semantic-Link (a.k.a. Sempy) library.
+The following code snippets may be executed in a [Microsoft Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook). These scripts leverage the Semantic Link (a.k.a. Sempy) library.
 
-This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic-Link (Sempy) library.
+This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic Link (Sempy) library.
 
-#### Load the [Semantic Link](https://pypi.org/project/semantic-link/) library inside of your notebook
+#### Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
 %pip install semantic-link
 ```
