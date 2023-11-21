@@ -3,6 +3,8 @@ The following code snippets may be executed in a [Microsoft Fabric notebook](htt
 
 This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic Link library.
 
+All code snippets in this repo are to be used with the latest version of the Semantic-Link library (0.3.6).
+
 #### Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
 %pip install semantic-link
@@ -212,7 +214,29 @@ x
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-fabric.refresh_dataset("Covid dataset 3",refresh_type = "full")
+fabric.refresh_dataset("Covid dataset 3", refresh_type = "full")
+```
+
+#### Refresh specific table(s) in a dataset
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+my_objects = [
+    {"table": "tableName1"}, #Update 'tableName1' with your table name
+    {"table": "tableName2"} #Update 'tableName2' with your table name
+]
+fabric.refresh_dataset("Covid dataset 3", refresh_type = "full", objects = my_objects)
+```
+
+#### Refresh specific table/partition(s) in a dataset
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+my_objects = [
+    {"table": "table1", "partition": "partition1"}, #Update 'table1' with your table name and 'partition1' with the partition name
+    {"table": "table2", "partition": "partition2"} #Update 'table2' with your table name and 'partition2' with the partition name
+]
+fabric.refresh_dataset("Covid dataset 3", refresh_type = "full", objects = my_objects)
 ```
 
 ## Read data from dataset
