@@ -148,7 +148,7 @@ x
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-x = fabric.list_tables(datasetName, True)
+x = fabric.list_columns(datasetName)
 x
 ```
 
@@ -156,7 +156,7 @@ x
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-x = fabric.list_tables(datasetName, False, True)
+x = fabric.list_partitions(datasetName)
 x
 ```
 
@@ -165,6 +165,14 @@ x
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
 x = fabric.list_measures(datasetName)
+x
+```
+
+#### List the hierarchies within a given dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_hierarchies(datasetName)
 x
 ```
 
@@ -183,6 +191,30 @@ datasetName = "" #Enter dataset name
 relationships = fabric.list_relationships(datasetName)
 plot_relationship_metadata(relationships)
 ```
+
+#### List the translations within a given dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_translations(datasetName)
+x
+
+#### List the expressions (parameters) within a given dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_expressions(datasetName)
+x
+
+## Dataset Refresh
+
+#### Refresh a dataset
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+fabric.refresh_dataset("Covid dataset 3",refresh_type = "full")
+```
+
 ## Read data from dataset
 
 #### Show a preview of the data in a given table from a dataset (semantic model)
