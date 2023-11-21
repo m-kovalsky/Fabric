@@ -200,6 +200,7 @@ import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
 x = fabric.list_translations(datasetName)
 x
+```
 
 #### List the expressions (parameters) within a given dataset (semantic model)
 ```python
@@ -207,6 +208,7 @@ import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
 x = fabric.list_expressions(datasetName)
 x
+```
 
 ## Dataset Refresh
 
