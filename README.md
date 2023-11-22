@@ -71,7 +71,7 @@ x
 #### Shows a list of your accessible workspaces, sorted alphabetically
 ```python
 import sempy.fabric as fabric
-x = fabric._list_workspaces().sort_values(by='Name', ascending=True)
+x = fabric.list_workspaces().sort_values(by='Name', ascending=True)
 x
 ```
 
@@ -79,7 +79,7 @@ x
 ```python
 import sempy.fabric as fabric
 workspaceName = "" #Enter the workspace name to be used as a filter
-x = fabric._list_workspaces()
+x = fabric.list_workspaces()
 filter_condition = [workspaceName]
 x = x[x['Name'].isin(filter_condition)]
 x
@@ -89,7 +89,7 @@ x
 ```python
 import sempy.fabric as fabric
 workspaceName = "" #Enter the workspace name to be used as a filter
-x = fabric._list_workspaces()
+x = fabric.list_workspaces()
 filter_condition = [workspaceName]
 x = x[x['Name'].isin(filter_condition)]
 y = x["Id"].values[0]
