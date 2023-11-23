@@ -129,6 +129,16 @@ x = fabric.list_datasets()
 x
 ```
 
+#### Shows the dataset ID for a given dataset name
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter your dataset name
+x = fabric.list_datasets()
+x = x[x['Dataset Name'] == datasetName]
+datasetID = x["Dataset ID"].values[0]
+datasetID
+```
+
 #### Shows the [TMSL](https://learn.microsoft.com/analysis-services/tmsl/tabular-model-scripting-language-tmsl-reference?view=asallproducts-allversions) for a given dataset
 ```python
 import sempy.fabric as fabric
