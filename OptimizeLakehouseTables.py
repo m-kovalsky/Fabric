@@ -11,5 +11,5 @@ for t in tables:
     delta_table_path = f"Tables/{tableName}"
     deltaTable = DeltaTable.forPath(spark, delta_table_path)
     deltaTable.optimize().executeCompaction()
-    print("The '" + tableName + "' table has been optimized. (" + str(i) + "/" + str(tableCount) + ")")
+    print(f"The '{tableName}' table has been optimized. ({str(i)}/{str(tableCount)})")
     i+=1
