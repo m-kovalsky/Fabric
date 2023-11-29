@@ -60,6 +60,16 @@ version = pkg_resources.get_distribution(libraryName).version
 version
 ```
 
+#### Show all available libraries in your notebook
+```python
+import pkg_resources
+import pandas as pd
+installed_packages = [pkg.key for pkg in pkg_resources.working_set]
+title = "Installed Packages"
+df = pd.DataFrame({title: installed_packages})
+display(df)
+```
+
 ## Workspace/Lakehouse objects
 
 #### Gets the Lakehouse ID from the current lakehouse
