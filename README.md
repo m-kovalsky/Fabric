@@ -52,6 +52,14 @@ import sempy.fabric as fabric
 help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in the dir(sempy.fabric) output
 ```
 
+#### Show the version for a given Python library
+```python
+import pkg_resources
+libraryName = "semantic-link" #Enter the name of the library
+version = pkg_resources.get_distribution(libraryName).version
+version
+```
+
 ## Workspace/Lakehouse objects
 
 #### Gets the Lakehouse ID from the current lakehouse
