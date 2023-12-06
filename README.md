@@ -70,6 +70,12 @@ df = pd.DataFrame({title: installed_packages})
 display(df)
 ```
 
+#### Refresh the TOM cache. If the semantic model has been updated during your notebook session, run this script to ensure you get the latest model metadata
+```python
+import sempy.fabric as fabric
+fabric.refresh_tom_cache()
+```
+
 ## Workspace/Lakehouse objects
 
 #### Gets the Lakehouse ID from the current lakehouse
