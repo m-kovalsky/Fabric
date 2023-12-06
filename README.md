@@ -37,7 +37,12 @@ An even better way to ensure the Semantic-Link library is available in your work
 import sempy
 import sempy.fabric as fabric
 import pandas as pd
+import pyspark
 import pyspark.sql.functions as F
+import pyarrow.dataset as ds
+import pyarrow.parquet as pq
+import os
+from delta.tables import DeltaTable
 ```
 
 ### Show the directory of all sempy functions
