@@ -6,7 +6,7 @@ This repo is intended to help business intelligence analysts/developers and data
 ## Requirements
 Semantic-link library version 0.3.6 or higher
 
-#### Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
+## Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
 %pip install semantic-link
 ```
