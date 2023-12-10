@@ -1,9 +1,10 @@
 # Fabric
-The following code snippets may be executed in a [Microsoft Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook). These scripts leverage the Semantic Link (a.k.a. Sempy) library.
+The following code snippets may be executed in a [Microsoft Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook). These scripts leverage the Semantic Link (a.k.a. SemPy) library.
 
 This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic Link library.
 
-All code snippets in this repo are to be used with the latest version of the Semantic-Link library (0.3.6).
+## Requirements
+Semantic-link library version 0.3.6 or higher
 
 #### Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
@@ -11,7 +12,7 @@ All code snippets in this repo are to be used with the latest version of the Sem
 ```
 
 ## Loading Semantic-Link into a custom Fabric environment
-An even better way to ensure the Semantic-Link library is available in your workspace/notebooks is to load it as a library in ac custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow the steps below to create an environment and load the Semantic-Link library.
+An even better way to ensure the Semantic-link library is available in your workspace/notebooks is to load it as a library in ac custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow the steps below to create an environment and load the Semantic-Link library.
 
 #### Create a custom environment
 1. Navigate to your Fabric workspace
@@ -30,9 +31,9 @@ An even better way to ensure the Semantic-Link library is available in your work
 1. Navigate to your Notebook
 2. Select your newly created environment within the 'Environment' drop down in the navigation bar at the top of the notebook
 
-## Packages, functions and Sempy help
+## Packages, functions and SemPy help
 
-#### Useful packages for python notebooks (Sempy and more)
+#### Useful packages for python notebooks (SemPy and more)
 ```python
 import sempy
 import sempy.fabric as fabric
@@ -45,7 +46,7 @@ import os
 from delta.tables import DeltaTable
 ```
 
-### Show the directory of all sempy functions
+### Show the directory of all SemPy functions
 ```python
 import sempy.fabric
 dir(sempy.fabric)
