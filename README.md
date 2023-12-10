@@ -46,7 +46,7 @@ import os
 from delta.tables import DeltaTable
 ```
 
-### Show the directory of all SemPy functions
+#### Show the directory of all SemPy functions
 ```python
 import sempy.fabric
 dir(sempy.fabric)
