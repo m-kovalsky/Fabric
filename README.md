@@ -12,7 +12,7 @@ Semantic-link library version 0.3.6 or higher
 ```
 
 ## Loading Semantic-link into a custom Fabric environment
-An even better way to ensure the Semantic-link library is available in your workspace/notebooks is to load it as a library in ac custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow the steps below to create an environment and load the Semantic-Link library.
+An even better way to ensure the Semantic-link library is available in your workspace/notebooks is to load it as a library in a custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow the steps below to create an environment and load the Semantic-Link library.
 
 #### Create a custom environment
 1. Navigate to your Fabric workspace
