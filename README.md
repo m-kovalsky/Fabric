@@ -22,7 +22,7 @@ An even better way to ensure the Semantic-link library is available in your work
 
 #### Add Semantic-Link as a library to the environment
 1. Within 'Public Libraries', click 'Add from PyPI'
-2. Enter 'Semantic-Link' in the text box under 'Library'
+2. Enter 'Semantic-link' in the text box under 'Library'
 3. Click 'Save' at the top right of the screen
 4. Click 'Publish' at the top right of the screen
 5. Click 'Publish All'
