@@ -77,6 +77,25 @@ latest_version = data["info"]["version"]
 print(f"The latest version of '{library_name}' is: {latest_version}")
 ```
 
+#### Identify if you have the latest version of a given library installed in your notebook
+```python
+import pkg_resources
+import requests
+
+library_name = "semantic-link" #Enter the name of the library
+version = pkg_resources.get_distribution(library_name).version
+
+url = f"https://pypi.org/pypi/{library_name}/json"
+response = requests.get(url)
+data = response.json()
+latest_version = data["info"]["version"]
+
+if version == latest_version:
+    print(f"You have the latest version of '{library_name}' installed.")
+else:
+    print(f"A new version '{latest_version}' of the '{library_name}' library is available.")
+```
+
 #### Show all available libraries in your notebook
 ```python
 import pkg_resources
