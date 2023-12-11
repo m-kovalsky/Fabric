@@ -58,12 +58,23 @@ import sempy.fabric as fabric
 help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in the dir(sempy.fabric) output
 ```
 
-#### Show the version of a Python library
+#### Show the version of a Python library within your notebook
 ```python
 import pkg_resources
 libraryName = "semantic-link" #Enter the name of the library
 version = pkg_resources.get_distribution(libraryName).version
 version
+```
+
+#### Show the latest version available of a Python library
+```python
+import requests
+library_name = 'semantic-link' #Enter the libary name
+url = f"https://pypi.org/pypi/{library_name}/json"
+response = requests.get(url)
+data = response.json()
+latest_version = data["info"]["version"]
+print(f"The latest version of '{library_name}' is: {latest_version}")
 ```
 
 #### Show all available libraries in your notebook
