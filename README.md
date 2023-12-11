@@ -61,15 +61,15 @@ help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in
 #### Show the version of a Python library within your notebook
 ```python
 import pkg_resources
-libraryName = "semantic-link" #Enter the name of the library
-version = pkg_resources.get_distribution(libraryName).version
+library_name = "semantic-link" #Enter the name of the library
+version = pkg_resources.get_distribution(library_name).version
 version
 ```
 
 #### Show the latest version available of a Python library
 ```python
 import requests
-library_name = 'semantic-link' #Enter the libary name
+library_name = 'semantic-link' #Enter the name of the library
 url = f"https://pypi.org/pypi/{library_name}/json"
 response = requests.get(url)
 data = response.json()
