@@ -268,7 +268,7 @@ plot_relationship_metadata(relationships)
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-x = fabric.list_roles(datasetName)
+x = fabric.get_roles(datasetName)
 x
 ```
 
@@ -276,7 +276,15 @@ x
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-x = fabric.list_roles(dataset = datasetName, include_members = True)
+x = fabric.get_roles(dataset = datasetName, include_members = True)
+x
+```
+
+#### List the row level security (RLS) for each role within a given dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.get_row_level_security_permissions(datasetName)
 x
 ```
 
