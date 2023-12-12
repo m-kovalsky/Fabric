@@ -169,7 +169,7 @@ id
 ```python
 import sempy.fabric as fabric
 id = "" #Enter the workspace ID
-x = fabric.resolve_workspace_name(workspaceID)
+x = fabric.resolve_workspace_name(id)
 x
 ```
 
