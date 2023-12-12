@@ -310,7 +310,7 @@ x
 ```python
 import sempy.fabric as fabric
 datasetName = "" #Enter dataset name
-fabric.refresh_dataset("Covid dataset 3", refresh_type = "full")
+fabric.refresh_dataset(dataset = datasetName, refresh_type = "full")
 ```
 
 #### Refresh specific table(s) in a dataset
@@ -321,7 +321,7 @@ my_objects = [
     {"table": "tableName1"}, #Update 'tableName1' with your table name
     {"table": "tableName2"}  #Update 'tableName2' with your table name
 ]
-fabric.refresh_dataset("Covid dataset 3", refresh_type = "full", objects = my_objects)
+fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
 ```
 
 #### Refresh specific partition(s) in a dataset
@@ -332,7 +332,7 @@ my_objects = [
     {"table": "table1", "partition": "partition1"}, #Update 'table1' with your table name and 'partition1' with the partition name
     {"table": "table2", "partition": "partition2"}  #Update 'table2' with your table name and 'partition2' with the partition name
 ]
-fabric.refresh_dataset("Covid dataset 3", refresh_type = "full", objects = my_objects)
+fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
 ```
 
 #### Refresh a combination of tables/partition(s) in a dataset
@@ -343,7 +343,7 @@ my_objects = [
     {"table": "table1"}, #Update 'table1' with your table name
     {"table": "table2", "partition": "partition2"}  #Update 'table2' with your table name and 'partition2' with the partition name
 ]
-fabric.refresh_dataset("Covid dataset 3", refresh_type = "full", objects = my_objects)
+fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
 ```
 
 ## Read data from a dataset
