@@ -272,6 +272,14 @@ x = fabric.list_roles(datasetName)
 x
 ```
 
+#### List the roles and role members within a given dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_roles(dataset = datasetName, include_members = True)
+x
+```
+
 #### List the translations within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
