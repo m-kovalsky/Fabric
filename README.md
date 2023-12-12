@@ -264,6 +264,14 @@ relationships = fabric.list_relationships(datasetName)
 plot_relationship_metadata(relationships)
 ```
 
+#### List the roles within a given dataset (semantic model)
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_roles(datasetName)
+x
+```
+
 #### List the translations within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
