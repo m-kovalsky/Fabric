@@ -306,6 +306,8 @@ x
 
 ## Dataset Refresh
 
+Valid options for refresh_type: 'full', 'automatic', 'dataOnly', 'calculate', 'clearValues', 'defragment'. Default is 'automatic'.
+
 #### Refresh a dataset
 ```python
 import sempy.fabric as fabric
