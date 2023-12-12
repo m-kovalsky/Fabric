@@ -232,6 +232,21 @@ x = fabric.list_partitions(datasetName)
 x
 ```
 
+#### List the partitions within a given dataset (semantic model) and properly format the Query column
+```python
+import sempy.fabric as fabric
+import pandas as pd
+
+datasetName = "" #Enter dataset name
+x = fabric.list_partitions(datasetName)
+
+def format_sql_query(value):
+    return value.replace('\n', '<br>').replace('\t', '&emsp;')
+
+x_styled = x.style.format({'Query': format_sql_query})
+x_styled
+```
+
 #### List the measures within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
