@@ -509,7 +509,7 @@ x
 
 EVALUATE
 SUMMARIZECOLUMNS(
-"Header Name",[Measure Name]
+"Header Name",[Measure Name] // Update with actual measure name
 )
 ```
 
