@@ -434,6 +434,60 @@ x = fabric.evaluate_dax(
 x
 ```
 
+#### Examples using the new 'INFO' DAX functions
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.evaluate_dax(
+    datasetName,
+    """
+    // Select specific columns and rename columns      	
+    EVALUATE
+    SELECTCOLUMNS(INFO.TABLES(),"Table Name", [Name],"Hidden", [IsHidden],"Data Category", [DataCategory],[Description])    
+    """)
+x
+```
+
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.evaluate_dax(
+    datasetName,
+    """
+    // Filter by multiple columns
+    EVALUATE
+    FILTER(INFO.TABLES(),[Name] = "FactInternetSales" && [IsHidden] = False)
+    """)
+x
+```
+
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.evaluate_dax(
+    datasetName,
+    """
+    // Select specific columns and filter
+    EVALUATE
+    FILTER(SELECTCOLUMNS(INFO.TABLES(),[Name],[IsHidden],[DataCategory],[Description]),[Name] = "FactInternetSales")
+    """)
+x
+```
+
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.evaluate_dax(
+    datasetName,
+    """
+    // View specific columns and order the table by a column in descending order
+    EVALUATE
+    SELECTCOLUMNS(COLUMNSTATISTICS(),"Table Name",[Table Name], [Column Name], [Cardinality])
+    ORDER BY [Cardinality] DESC
+    """)
+x
+```
+
 #### Run a single measure against 1+ columns in your dataset
 ```python
 import sempy.fabric as fabric
