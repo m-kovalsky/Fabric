@@ -374,6 +374,7 @@ rowLimit = 100
 x = fabric.read_table(datasetName,tableName,False,rowLimit)
 x
 ```
+
 ## Tabular Object Model
 
 #### Connect to the [Tabular Object Model](https://learn.microsoft.com/analysis-services/tom/introduction-to-the-tabular-object-model-tom-in-analysis-services-amo?view=asallproducts-allversions) ([TOM](https://learn.microsoft.com/dotnet/api/microsoft.analysisservices.tabular.model?view=analysisservices-dotnet)); prints each table name
@@ -404,10 +405,9 @@ x = fabric.evaluate_dax(
     """
     EVALUATE
     SUMMARIZECOLUMNS(
-    "Header Name",[Measure Name]
+    "Header Name",[Measure Name] // update with actual measure name
     )
-    """
-    )
+    """)
 x
 ```
 
@@ -456,7 +456,7 @@ x = fabric.evaluate_dax(
     """
     // Filter by multiple columns
     EVALUATE
-    FILTER(INFO.TABLES(),[Name] = "FactInternetSales" && [IsHidden] = False)
+    FILTER(INFO.TABLES(),[Name] = "TableName" && [IsHidden] = False) // Update filter with the actual table name
     """)
 x
 ```
@@ -469,7 +469,7 @@ x = fabric.evaluate_dax(
     """
     // Select specific columns and filter
     EVALUATE
-    FILTER(SELECTCOLUMNS(INFO.TABLES(),[Name],[IsHidden],[DataCategory],[Description]),[Name] = "FactInternetSales")
+    FILTER(SELECTCOLUMNS(INFO.TABLES(),[Name],[IsHidden],[DataCategory],[Description]),[Name] = "TableName") // Update filter with the actual table name
     """)
 x
 ```
