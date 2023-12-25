@@ -4,7 +4,7 @@ The following code snippets may be executed in a [Microsoft Fabric notebook](htt
 This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic Link library.
 
 ## Requirements
-Semantic-link library version 0.3.6 or higher
+Semantic-link library version 0.4.0 or higher
 
 ## Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
@@ -177,6 +177,15 @@ x
 ```python
 import sempy.fabric as fabric
 x = fabric.get_workspace_id()
+x
+```
+
+## Reports
+
+#### Shows a list of reports within the workspace
+```python
+import sempy.fabric as fabric
+x = fabric.list_reports()
 x
 ```
 
