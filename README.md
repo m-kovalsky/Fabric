@@ -372,6 +372,14 @@ my_objects = [
 fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
 ```
 
+#### Show refresh requests for a given dataset
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_refresh_requests(datasetName)
+x
+```
+
 ## Read data from a dataset
 
 #### Show a preview of the data in a given table from a dataset (semantic model)
