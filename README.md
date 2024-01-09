@@ -264,6 +264,19 @@ x = fabric.list_measures(datasetName)
 x
 ```
 
+#### List the measures within a given dataset (semantic model) and properly format the Measure Expression column
+```python
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+x = fabric.list_measures(datasetName)
+
+def format_sql_query(value):
+    return value.replace('\n', '<br>').replace('\t', '&emsp;')
+
+x_styled = x.style.format({'Measure Expression': format_sql_query})
+x_styled
+```
+
 #### List the hierarchies within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
