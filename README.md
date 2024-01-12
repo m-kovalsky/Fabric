@@ -114,6 +114,13 @@ fabric.refresh_tom_cache()
 
 ## Workspace/Lakehouse objects
 
+#### Show a list of all objects in your workspace
+```python
+import sempy.fabric as fabric
+x = fabric.list_items()
+x
+```
+
 #### Gets the Lakehouse ID from the current lakehouse
 ```python
 import sempy.fabric as fabric
