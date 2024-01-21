@@ -343,5 +343,5 @@ def export_report_objects(reportName):
     print('Images')
     display(imagesDF)
 
-export_report_objects("Corona2") # Enter Report Name
+export_report_objects("") # Enter Report Name
 
