@@ -57,9 +57,12 @@ def export_report_objects(reportName):
     visualObjectsDF = pd.DataFrame(visualObjectsHeader)
 
     # Custom Visuals
-    for customVisual in reportJson['publicCustomVisuals']:
-        new_data = {'Custom Visual Name': customVisual}
-        customVisualsDF = pd.concat([customVisualsDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+    try:
+        for customVisual in reportJson['publicCustomVisuals']:
+            new_data = {'Custom Visual Name': customVisual}
+            customVisualsDF = pd.concat([customVisualsDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+    except:
+        pass
 
     # Themes and Images
     for rp in reportJson['resourcePackages']:
@@ -90,48 +93,51 @@ def export_report_objects(reportName):
     reportDF['Image Count'] = reportDF['Image Count'].astype(int)
 
     # Report Filters
-    reportFilters = reportJson['filters']
-    reportFilterJson = json.loads(reportFilters)
+    try:
+        reportFilters = reportJson['filters']
+        reportFilterJson = json.loads(reportFilters)
 
-    for flt in reportFilterJson:
-        filterName = flt['name']
-        filterType = flt['type']
-        filterLocked = False
-        filterHidden = False
-        filterObjName = None
-        filterObjType = None
-        filterTblName = None
-        try:
-            filterLocked = flt['isLockedInViewMode']
-        except:
-            pass
-        try:
-            filterHidden = flt['isHiddenInViewMode']
-        except:
-            pass
-        try:
-            filterObjName = flt['expression']['Column']['Property']
-            filterObjType = 'Column'
-            filterTblName = flt['expression']['Column']['Expression']['SourceRef']['Entity']
-        except:
-            pass
-        try:
-            filterObjName = flt['expression']['Measure']['Property']
-            filterObjType = 'Measure'
-            filterTblName = flt['expression']['Measure']['Expression']['SourceRef']['Entity']
-        except:
-            pass
-        try:
-            filterLevel = flt['expression']['HierarchyLevel']['Level']
-            filterHierName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Hierarchy']
-            filterObjName = filterHierName + "." + filterLevel
-            filterObjType = 'Hierarchy'
-            filterTblName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Expression']['SourceRef']['Entity']
-        except:
-            pass
+        for flt in reportFilterJson:
+            filterName = flt['name']
+            filterType = flt['type']
+            filterLocked = False
+            filterHidden = False
+            filterObjName = None
+            filterObjType = None
+            filterTblName = None
+            try:
+                filterLocked = flt['isLockedInViewMode']
+            except:
+                pass
+            try:
+                filterHidden = flt['isHiddenInViewMode']
+            except:
+                pass
+            try:
+                filterObjName = flt['expression']['Column']['Property']
+                filterObjType = 'Column'
+                filterTblName = flt['expression']['Column']['Expression']['SourceRef']['Entity']
+            except:
+                pass
+            try:
+                filterObjName = flt['expression']['Measure']['Property']
+                filterObjType = 'Measure'
+                filterTblName = flt['expression']['Measure']['Expression']['SourceRef']['Entity']
+            except:
+                pass
+            try:
+                filterLevel = flt['expression']['HierarchyLevel']['Level']
+                filterHierName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Hierarchy']
+                filterObjName = filterHierName + "." + filterLevel
+                filterObjType = 'Hierarchy'
+                filterTblName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Expression']['SourceRef']['Entity']
+            except:
+                pass
 
-        new_data = {'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
-        reportFiltersDF = pd.concat([reportFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)        
+            new_data = {'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
+            reportFiltersDF = pd.concat([reportFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+    except:
+        pass
 
     # Pages
     for section in reportJson['sections']:
@@ -169,45 +175,48 @@ def export_report_objects(reportName):
         pageDF['Visual Count'] = pageDF['Visual Count'].astype(int)
 
         # Page Filters
-        pageFiltersJson = json.loads(pageFilters)
+        try:
+            pageFiltersJson = json.loads(pageFilters)
 
-        for flt in pageFiltersJson:
-            filterName = flt['name']
-            filterType = flt['type']
-            filterLocked = False
-            filterHidden = False
-            try:
-                filterLocked = flt['isLockedInViewMode']
-            except:
-                pass
-            try:
-                filterHidden = flt['isHiddenInViewMode']
-            except:
-                pass
-            try:
-                filterObjName = flt['expression']['Column']['Property']
-                filterObjType = 'Column'
-                filterTblName = flt['expression']['Column']['Expression']['SourceRef']['Entity']
-            except:
-                pass
-            try:
-                filterObjName = flt['expression']['Measure']['Property']
-                filterObjType = 'Measure'
-                filterTblName = flt['expression']['Measure']['Expression']['SourceRef']['Entity']
-            except:
-                pass
-            try:
-                filterLevel = flt['expression']['HierarchyLevel']['Level']
-                filterHierName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Hierarchy']
-                filterObjName = filterHierName + "." + filterLevel
-                filterObjType = 'Hierarchy'
-                filterTblName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Expression']['SourceRef']['Entity']
-            except:
-                pass
-            new_data = {'Page ID': pageID, 'Page Name': pageName, 'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
-            pageFiltersDF = pd.concat([pageFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-            pageFiltersDF['Hidden'] = pageFiltersDF['Hidden'].astype(bool)
-            pageFiltersDF['Locked'] = pageFiltersDF['Locked'].astype(bool)
+            for flt in pageFiltersJson:
+                filterName = flt['name']
+                filterType = flt['type']
+                filterLocked = False
+                filterHidden = False
+                try:
+                    filterLocked = flt['isLockedInViewMode']
+                except:
+                    pass
+                try:
+                    filterHidden = flt['isHiddenInViewMode']
+                except:
+                    pass
+                try:
+                    filterObjName = flt['expression']['Column']['Property']
+                    filterObjType = 'Column'
+                    filterTblName = flt['expression']['Column']['Expression']['SourceRef']['Entity']
+                except:
+                    pass
+                try:
+                    filterObjName = flt['expression']['Measure']['Property']
+                    filterObjType = 'Measure'
+                    filterTblName = flt['expression']['Measure']['Expression']['SourceRef']['Entity']
+                except:
+                    pass
+                try:
+                    filterLevel = flt['expression']['HierarchyLevel']['Level']
+                    filterHierName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Hierarchy']
+                    filterObjName = filterHierName + "." + filterLevel
+                    filterObjType = 'Hierarchy'
+                    filterTblName = flt['expression']['HierarchyLevel']['Expression']['Hierarchy']['Expression']['SourceRef']['Entity']
+                except:
+                    pass
+                new_data = {'Page ID': pageID, 'Page Name': pageName, 'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
+                pageFiltersDF = pd.concat([pageFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+                pageFiltersDF['Hidden'] = pageFiltersDF['Hidden'].astype(bool)
+                pageFiltersDF['Locked'] = pageFiltersDF['Locked'].astype(bool)
+        except:
+            pass
 
         # Visuals
         for visual in section['visualContainers']:
@@ -227,6 +236,7 @@ def export_report_objects(reportName):
             customVisualFlag = False
             objectCount = 0
             dataVisual = False
+            title = None
 
             try:
                 objectCount = len(visualConfigJson['singleVisual']['prototypeQuery']['Select'])
@@ -321,7 +331,7 @@ def export_report_objects(reportName):
             viz2DF = pd.DataFrame(viz2Header)
 
             viz3Header = {'Visual ID': [], 'Object Type': [], 'Object Name': [], 'Table Alias': []}
-            viz3DF = pd.DataFrame(viz3Header)
+            viz3DF = pd.DataFrame(viz3Header)            
 
             # Visual Objects
             try:                
@@ -351,12 +361,18 @@ def export_report_objects(reportName):
                         objName = o['Column']['Property']
                         objType = 'Column'
                         alias = o[objType]['Expression']['SourceRef']['Source']
+
+                        new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                        viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
                     except:
                         pass
                     try:                       
                         objName = o['Measure']['Property']
                         objType = 'Measure'
                         alias = o[objType]['Expression']['SourceRef']['Source']
+
+                        new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                        viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
                     except:
                         pass
                     try:                        
@@ -365,12 +381,18 @@ def export_report_objects(reportName):
                         objName = hierName + "." + levelName
                         alias = o['HierarchyLevel']['Expression']['Hierarchy']['Expression']['SourceRef']['Source']
                         objType = 'Hierarchy'
+
+                        new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                        viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
                     except:
                         pass
                     try:                       
                         objName = o['Aggregation']['Expression']['Column']['Property']
                         objType = 'Column'
                         alias = o['Aggregation']['Expression']['Column']['Expression']['SourceRef']['Source']
+                        
+                        new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                        viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
                     except:
                         pass
                     #Sparklines
@@ -378,19 +400,33 @@ def export_report_objects(reportName):
                         objName = o['SparklineData']['Measure']['Measure']['Property']
                         objType = 'Measure'
                         alias = o['SparklineData']['Measure']['Measure']['Expression']['SourceRef']['Source']
-                        isSparkLine = True
+                        isSparkline = True
+
+                        new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                        viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
                     except:
                         pass
                     try:                       
                         objName = o['SparklineData']['Measure']['Aggregation']['Expression']['Column']['Property']
                         objType = 'Column'
                         alias = o['SparklineData']['Measure']['Aggregation']['Expression']['Column']['Expression']['SourceRef']['Source']
-                        isSparkLine = True
+                        isSparkline = True
+
+                        new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                        viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
                     except:
                         pass
+                    try:
+                        for sp in o['SparklineData']['Groupings']:                            
+                            alias = sp['Column']['Expression']['SourceRef']['Source']
+                            objName = sp['Column']['Property']
+                            objType = 'Column'
+                            isSparkline = True
 
-                    new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
-                    viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+                            new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                            viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+                    except:
+                        pass
                 
                 viz3DF = pd.merge(viz3DF,viz2DF[['Table Alias', 'Table Name']], on='Table Alias', how='left')
                 viz3DF['Object'] = viz3DF['Table Name'] + "." + viz3DF['Object Name']
@@ -402,15 +438,18 @@ def export_report_objects(reportName):
                 pass
     
     # Bookmarks
-    for bookmark in reportConfigJson['bookmarks']:
-        bID = bookmark['name']
-        bName = bookmark['displayName']
-        rptPageId = bookmark['explorationState']['activeSection']
+    try:
+        for bookmark in reportConfigJson['bookmarks']:
+            bID = bookmark['name']
+            bName = bookmark['displayName']
+            rptPageId = bookmark['explorationState']['activeSection']
 
-        new_data = {'Bookmark ID': bID, 'Bookmark Name': bName, 'Page ID': rptPageId}
-        bookmarksDF = pd.concat([bookmarksDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+            new_data = {'Bookmark ID': bID, 'Bookmark Name': bName, 'Page ID': rptPageId}
+            bookmarksDF = pd.concat([bookmarksDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
 
-    bookmarksDF = pd.merge(bookmarksDF, pageDF[['Page ID', 'Page Name']], on='Page ID', how='left')
+        bookmarksDF = pd.merge(bookmarksDF, pageDF[['Page ID', 'Page Name']], on='Page ID', how='left')
+    except:
+        pass
 
     # Add useful columns to DFs
     customVisualsDF['Used in Report'] = customVisualsDF['Custom Visual Name'].isin(visualDF['Type'])
