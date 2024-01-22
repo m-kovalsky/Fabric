@@ -35,7 +35,7 @@ def export_report_objects(reportName):
     pageFiltersHeader = {'Page ID': [], 'Page Name': [], 'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []}
     pageFiltersDF = pd.DataFrame(pageFiltersHeader)
 
-    visualHeader = {'Visual ID': [], 'Page Name': [], 'Title': [], 'Type': [], 'Hidden': [], 'Group': [], 'X': [], 'Y': [], 'Z': [], 'Width': [], 'Height': [], 'Custom Visual Flag': []}
+    visualHeader = {'Visual ID': [], 'Page Name': [], 'Title': [], 'Type': [], 'Hidden': [], 'Group': [], 'X': [], 'Y': [], 'Z': [], 'Width': [], 'Height': [], 'Tab Order': [], 'Custom Visual': [], 'Object Count': [], 'Data Visual': []}
     visualDF = pd.DataFrame(visualHeader)
 
     visualFiltersHeader = {'Visual ID': [], 'Page ID': [], 'Page Name': [], 'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []}
@@ -52,6 +52,9 @@ def export_report_objects(reportName):
 
     imagesHeader = {'Image Name': [], 'Image Path': []}
     imagesDF = pd.DataFrame(imagesHeader)
+
+    visualObjectsHeader = {'Visual ID': [], 'Data Point Location': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Active': [], 'Sparkline': []}
+    visualObjectsDF = pd.DataFrame(visualObjectsHeader)
 
     # Custom Visuals
     for customVisual in reportJson['publicCustomVisuals']:
@@ -128,9 +131,7 @@ def export_report_objects(reportName):
             pass
 
         new_data = {'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
-        reportFiltersDF = pd.concat([reportFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-        reportFiltersDF['Hidden'] = reportFiltersDF['Hidden'].astype(bool)
-        reportFiltersDF['Locked'] = reportFiltersDF['Locked'].astype(bool)
+        reportFiltersDF = pd.concat([reportFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)        
 
     # Pages
     for section in reportJson['sections']:
@@ -220,10 +221,23 @@ def export_report_objects(reportName):
             visualZ = visual['z']
             visualWidth = visual['width']
             visualHeight = visual['height']
+            tabOrder = None
             visualHidden = False
             visualGroup = False
             customVisualFlag = False
-            
+            objectCount = 0
+            dataVisual = False
+
+            try:
+                objectCount = len(visualConfigJson['singleVisual']['prototypeQuery']['Select'])
+            except:
+                pass
+            if objectCount > 0:
+                dataVisual = True
+            try:
+                tabOrder = visualConfigJson['layouts'][0]['position']['tabOrder']
+            except:
+                pass
             try:
                 visualType = visualConfigJson['singleVisual']['visualType']
             except:
@@ -248,7 +262,7 @@ def export_report_objects(reportName):
             if visualType in customVisualsDF['Custom Visual Name'].values:
                 customVisualFlag = True
 
-            new_data = {'Visual ID': visualID, 'Page Name': pageName, 'Title': title, 'Type': visualType, 'Hidden': visualHidden, 'Group': visualGroup, 'X': visualX, 'Y': visualY, 'Z': visualZ, 'Width': visualWidth, 'Height': visualHeight, 'Custom Visual': customVisualFlag}
+            new_data = {'Visual ID': visualID, 'Page Name': pageName, 'Title': title, 'Type': visualType, 'Hidden': visualHidden, 'Group': visualGroup, 'X': visualX, 'Y': visualY, 'Z': visualZ, 'Width': visualWidth, 'Height': visualHeight, 'Tab Order': tabOrder, 'Custom Visual': customVisualFlag, 'Object Count': objectCount, 'Data Visual': dataVisual}
             visualDF = pd.concat([visualDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
 
             visualDF['Hidden'] = visualDF['Hidden'].astype(bool)
@@ -299,6 +313,93 @@ def export_report_objects(reportName):
                     visualFiltersDF['Locked'] = visualFiltersDF['Locked'].astype(bool)
             except:
                 pass
+
+            viz1Header = {'Visual ID': [], 'Data Point Location': [], 'Object': [], 'Active': []}
+            viz1DF = pd.DataFrame(viz1Header)
+
+            viz2Header = {'Visual ID': [], 'Table Alias': [], 'Table Name': [], 'Table Type': []}
+            viz2DF = pd.DataFrame(viz2Header)
+
+            viz3Header = {'Visual ID': [], 'Object Type': [], 'Object Name': [], 'Table Alias': []}
+            viz3DF = pd.DataFrame(viz3Header)
+
+            # Visual Objects
+            try:                
+                for objLocation in visualConfigJson['singleVisual']['projections']:
+                    for o in visualConfigJson['singleVisual']['projections'][objLocation]:
+                        obj = o['queryRef']
+                        isActive = False
+                        try:
+                            isActive = o['active']
+                        except:
+                            pass
+
+                        new_data = {'Visual ID': visualID, 'Data Point Location': objLocation, 'Object': obj, 'Active': isActive }
+                        viz1DF = pd.concat([viz1DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+
+                for fromStatement in visualConfigJson['singleVisual']['prototypeQuery']['From']:
+                    tblAlias = fromStatement['Name']
+                    tblName = fromStatement['Entity']
+                    tblType = fromStatement['Type']
+
+                    new_data = {'Visual ID': visualID, 'Table Alias': tblAlias, 'Table Name': tblName, 'Table Type': tblType }
+                    viz2DF = pd.concat([viz2DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+                    
+                for o in visualConfigJson['singleVisual']['prototypeQuery']['Select']:
+                    isSparkline = False
+                    try:                        
+                        objName = o['Column']['Property']
+                        objType = 'Column'
+                        alias = o[objType]['Expression']['SourceRef']['Source']
+                    except:
+                        pass
+                    try:                       
+                        objName = o['Measure']['Property']
+                        objType = 'Measure'
+                        alias = o[objType]['Expression']['SourceRef']['Source']
+                    except:
+                        pass
+                    try:                        
+                        levelName = o['HierarchyLevel']['Level']
+                        hierName = o['HierarchyLevel']['Expresssion']['Hierarchy']['Hierarchy']
+                        objName = hierName + "." + levelName
+                        alias = o['HierarchyLevel']['Expression']['Hierarchy']['Expression']['SourceRef']['Source']
+                        objType = 'Hierarchy'
+                    except:
+                        pass
+                    try:                       
+                        objName = o['Aggregation']['Expression']['Column']['Property']
+                        objType = 'Column'
+                        alias = o['Aggregation']['Expression']['Column']['Expression']['SourceRef']['Source']
+                    except:
+                        pass
+                    #Sparklines
+                    try:                       
+                        objName = o['SparklineData']['Measure']['Measure']['Property']
+                        objType = 'Measure'
+                        alias = o['SparklineData']['Measure']['Measure']['Expression']['SourceRef']['Source']
+                        isSparkLine = True
+                    except:
+                        pass
+                    try:                       
+                        objName = o['SparklineData']['Measure']['Aggregation']['Expression']['Column']['Property']
+                        objType = 'Column'
+                        alias = o['SparklineData']['Measure']['Aggregation']['Expression']['Column']['Expression']['SourceRef']['Source']
+                        isSparkLine = True
+                    except:
+                        pass
+
+                    new_data = {'Visual ID': visualID, 'Object Type': objType, 'Object Name': objName, 'Table Alias': alias, 'Sparkline': isSparkline }
+                    viz3DF = pd.concat([viz3DF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+                
+                viz3DF = pd.merge(viz3DF,viz2DF[['Table Alias', 'Table Name']], on='Table Alias', how='left')
+                viz3DF['Object'] = viz3DF['Table Name'] + "." + viz3DF['Object Name']
+                viz3DF = pd.merge(viz3DF,viz1DF[['Data Point Location', 'Object', 'Active']], on='Object', how='left')
+
+                visualObjectsDF = pd.concat([visualObjectsDF,viz3DF[['Visual ID', 'Data Point Location', 'Object Name', 'Object Type', 'Table Name', 'Active', 'Sparkline']]], ignore_index=True)
+
+            except:
+                pass
     
     # Bookmarks
     for bookmark in reportConfigJson['bookmarks']:
@@ -321,6 +422,15 @@ def export_report_objects(reportName):
     pageDF = pd.merge(pageDF, filter_counts, on='Page ID', how='left')
     pageDF['Page Filter Count'].fillna(0, inplace=True)
     pageDF['Page Filter Count'] = pageDF['Page Filter Count'].astype(int)
+    visualDF['Tab Order'] = visualDF['Tab Order'].astype(int)
+    visualDF['Custom Visual'] = visualDF['Custom Visual'].astype(bool)
+    visualObjectsDF['Active'] = visualObjectsDF['Active'].astype(bool)
+    visualObjectsDF['Sparkline'] = visualObjectsDF['Sparkline'].astype(bool)
+    reportFiltersDF['Hidden'] = reportFiltersDF['Hidden'].astype(bool)
+    reportFiltersDF['Locked'] = reportFiltersDF['Locked'].astype(bool)
+    visualDF['Object Count'] = visualDF['Object Count'].astype(int)
+    visualDF['Data Visual'] = visualDF['Data Visual'].astype(bool)
+    visualDF['Z'] = visualDF['Z'].astype(int)
 
     print('Report')
     display(reportDF)
@@ -342,6 +452,7 @@ def export_report_objects(reportName):
     display(themesDF)
     print('Images')
     display(imagesDF)
+    print('Visual Objects')
+    display(visualObjectsDF)
 
 export_report_objects("") # Enter Report Name
-
