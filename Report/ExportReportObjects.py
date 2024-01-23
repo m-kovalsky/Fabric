@@ -23,38 +23,21 @@ def export_report_objects(reportName):
     reportJson = json.loads(reportFile)
 
     # Data frame prep
-    reportHeader = {'Report Name': [], 'Page Count': [], 'Custom Visual Count': [], 'Theme Count': [], 'Image Count': []}
-    reportDF = pd.DataFrame(reportHeader)
+    reportDF = pd.DataFrame({'Report Name': [], 'Page Count': [], 'Custom Visual Count': [], 'Theme Count': [], 'Image Count': []})
+    reportFiltersDF = pd.DataFrame({'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []})
+    
+    pageDF = pd.DataFrame({'Page ID': [], 'Page Name': [], 'Hidden': [], 'Page Width': [], 'Page Height': [], 'Display Option': [], 'Type': [], 'Background': [], 'Background Type': [], 'Wallpaper': [], 'Wallpaper Type': [], 'Vertical Alignment': [], 'Visual Count': []})
+    pageFiltersDF = pd.DataFrame({'Page ID': [], 'Page Name': [], 'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []})
+    
+    visualDF = pd.DataFrame({'Visual ID': [], 'Page Name': [], 'Title': [], 'Type': [], 'Hidden': [], 'Group': [], 'X': [], 'Y': [], 'Z': [], 'Width': [], 'Height': [], 'Tab Order': [], 'Custom Visual': [], 'Object Count': [], 'Data Visual': [], 'Show Items With No Data': [], 'Alt text': [], 'Slicer Type': []})
+    visualFiltersDF = pd.DataFrame({'Visual ID': [], 'Page ID': [], 'Page Name': [], 'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []})
+    visualObjectsDF = pd.DataFrame({'Visual ID': [], 'Data Point Location': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Active': [], 'Sparkline': []})
 
-    reportFiltersHeader = {'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []}
-    reportFiltersDF = pd.DataFrame(reportFiltersHeader)
-
-    pageHeader = {'Page ID': [], 'Page Name': [], 'Hidden': [], 'Page Width': [], 'Page Height': [], 'Display Option': [], 'Visual Count': []}
-    pageDF = pd.DataFrame(pageHeader)
-
-    pageFiltersHeader = {'Page ID': [], 'Page Name': [], 'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []}
-    pageFiltersDF = pd.DataFrame(pageFiltersHeader)
-
-    visualHeader = {'Visual ID': [], 'Page Name': [], 'Title': [], 'Type': [], 'Hidden': [], 'Group': [], 'X': [], 'Y': [], 'Z': [], 'Width': [], 'Height': [], 'Tab Order': [], 'Custom Visual': [], 'Object Count': [], 'Data Visual': []}
-    visualDF = pd.DataFrame(visualHeader)
-
-    visualFiltersHeader = {'Visual ID': [], 'Page ID': [], 'Page Name': [], 'Filter Name': [], 'Type': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Hidden': [], 'Locked': []}
-    visualFiltersDF = pd.DataFrame(visualFiltersHeader)
-
-    bookmarksHeader = {'Bookmark ID': [], 'Bookmark Name': [], 'Page ID': []}
-    bookmarksDF = pd.DataFrame(bookmarksHeader)
-
-    customVisualsHeader = {'Custom Visual Name': []}
-    customVisualsDF = pd.DataFrame(customVisualsHeader)
-
-    themesHeader = {'Theme Name': [], 'Theme Path': []}
-    themesDF = pd.DataFrame(themesHeader)
-
-    imagesHeader = {'Image Name': [], 'Image Path': []}
-    imagesDF = pd.DataFrame(imagesHeader)
-
-    visualObjectsHeader = {'Visual ID': [], 'Data Point Location': [], 'Object Name': [], 'Object Type': [], 'Table Name': [], 'Active': [], 'Sparkline': []}
-    visualObjectsDF = pd.DataFrame(visualObjectsHeader)
+    bookmarksDF = pd.DataFrame({'Bookmark ID': [], 'Bookmark Name': [], 'Page ID': [], 'Visual ID': [], 'Visual Hidden': []})
+    customVisualsDF = pd.DataFrame({'Custom Visual Name': []})
+    themesDF = pd.DataFrame({'Theme Name': [], 'Theme Path': []})
+    imagesDF = pd.DataFrame({'Image Name': [], 'Image Path': []})
+    visualInteractionsDF = pd.DataFrame({'Page Name': [], 'Source Visual ID': [], 'Target Visual ID': [], 'Type ID': [], 'Type': []})
 
     # Custom Visuals
     try:
@@ -86,11 +69,7 @@ def export_report_objects(reportName):
     themeCount = len(themesDF)
     imageCount = len(imagesDF)
     new_data = {'Report Name': objectName, 'Page Count': pageCount, 'Custom Visual Count': customVisualCount, 'Theme Count': themeCount, 'Image Count': imageCount}
-    reportDF = pd.concat([reportDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-    reportDF['Page Count'] = reportDF['Page Count'].astype(int)
-    reportDF['Custom Visual Count'] = reportDF['Custom Visual Count'].astype(int)
-    reportDF['Theme Count'] = reportDF['Theme Count'].astype(int)
-    reportDF['Image Count'] = reportDF['Image Count'].astype(int)
+    reportDF = pd.concat([reportDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)    
 
     # Report Filters
     try:
@@ -98,13 +77,18 @@ def export_report_objects(reportName):
         reportFilterJson = json.loads(reportFilters)
 
         for flt in reportFilterJson:
-            filterName = flt['name']
+            filterName = None
             filterType = flt['type']
             filterLocked = False
             filterHidden = False
             filterObjName = None
             filterObjType = None
             filterTblName = None
+
+            try:
+                filterName = flt['name']
+            except:
+                pass
             try:
                 filterLocked = flt['isLockedInViewMode']
             except:
@@ -154,6 +138,12 @@ def export_report_objects(reportName):
         pageNumber = 0
         displayOption = section['displayOption']
         pageHidden = False
+        pageBackground = None
+        backgroundType = None
+        pageWallpaper = None
+        wallpaperType = None
+        pageType = None
+        pageAlignment = "Top"
 
         try:
             pageNumber = section['ordinal']
@@ -165,24 +155,84 @@ def export_report_objects(reportName):
                 pageHidden = True
         except:
             pass
+        try:
+            pageBackground = pageConfigJson['objects']['background'][0]['properties']['image']['image']['url']['expr']['ResourcePackageItem']['ItemName']
+            backgroundType = 'Image'
+        except:
+            pass
+        try:
+            pageBackground = pageConfigJson['objects']['background'][0]['properties']['color']['solid']['color']['expr']['ThemeDataColor']['ColorId']
+            backgroundType = 'Standard Color'
+        except:
+            pass
+        try:
+            pageBackground = pageConfigJson['objects']['background'][0]['properties']['color']['solid']['color']['expr']['Literal']['Value']
+            backgroundType = 'Custom Color'
+        except:
+            pass
+        try:
+            pageWallpaper = pageConfigJson['objects']['outspace'][0]['properties']['image']['image']['url']['expr']['ResourcePackageItem']['ItemName']
+            wallpaperType = 'Image'
+        except:
+            pass
+        try:
+            pageWallpaper = pageConfigJson['objects']['outspace'][0]['properties']['color']['solid']['color']['expr']['ThemeDataColor']['ColorId']
+            wallpaperType = 'Standard Color'
+        except:
+            pass
+        try:
+            pageWallpaper = pageConfigJson['objects']['outspace'][0]['properties']['color']['solid']['color']['expr']['Literal']['Value']
+            wallpaperType = 'Custom Color'
+        except:
+            pass
+        try:
+            pageAlignment = pageConfigJson['objects']['displayArea'][0]['properties']['verticalAlignment']['expr']['Literal']['Value']
+            pageAlignment = pageAlignment[1:-1]
+        except:
+            pass
+
+        if displayOption == 3 and pageWidth == 320 and pageHeight == 240:
+            pageType = 'Tooltip'
+        elif pageWidth == 816 and pageHeight == 1056:
+            pageType = 'Letter'
+        elif pageWidth ==960 and pageHeight == 720:
+            pageType = '4:3'
+        elif pageWidth == 1280 and pageHeight == 720:
+            pageType = '16:9'
+        else:
+            pageType = 'Custom'
+
+        # Visual Interactions
+        try:
+            for rel in pageConfigJson['relationships']:
+                sourceViz = rel['source']
+                targetViz = rel['target']
+                typeID = rel['type']
+                type_ar = ["blank", "Filter", "Highlight", "None"]
+                type_value = type_ar[typeID]
+
+                new_data = {'Page Name': pageName, 'Source Visual ID': sourceViz, 'Target Visual ID': targetViz, 'Type ID': typeID, 'Type': type_value}
+                visualInteractionsDF = pd.concat([visualInteractionsDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)    
+        except:
+            pass
         
-        new_data = {'Page ID': pageID, 'Page Name': pageName, 'Hidden': pageHidden, 'Page Width': pageWidth, 'Page Height': pageHeight, 'Display Option': displayOption, 'Visual Count': visualCount}
-        pageDF = pd.concat([pageDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-        pageDF['Hidden'] = pageDF['Hidden'].astype(bool)
-        pageDF['Page Width'] = pageDF['Page Width'].astype(int)
-        pageDF['Page Height'] = pageDF['Page Height'].astype(int)
-        pageDF['Display Option'] = pageDF['Display Option'].astype(int)
-        pageDF['Visual Count'] = pageDF['Visual Count'].astype(int)
+        new_data = {'Page ID': pageID, 'Page Name': pageName, 'Hidden': pageHidden, 'Page Width': pageWidth, 'Page Height': pageHeight, 'Display Option': displayOption, 'Type': pageType, 'Background': pageBackground, 'Background Type': backgroundType, 'Wallpaper': pageWallpaper, 'Wallpaper Type': wallpaperType, 'Vertical Alignment': pageAlignment, 'Visual Count': visualCount}
+        pageDF = pd.concat([pageDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)        
 
         # Page Filters
         try:
             pageFiltersJson = json.loads(pageFilters)
 
             for flt in pageFiltersJson:
-                filterName = flt['name']
+                filterName = None                
                 filterType = flt['type']
                 filterLocked = False
                 filterHidden = False
+
+                try:
+                    filterName = flt['name']
+                except:
+                    pass
                 try:
                     filterLocked = flt['isLockedInViewMode']
                 except:
@@ -212,9 +262,7 @@ def export_report_objects(reportName):
                 except:
                     pass
                 new_data = {'Page ID': pageID, 'Page Name': pageName, 'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
-                pageFiltersDF = pd.concat([pageFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-                pageFiltersDF['Hidden'] = pageFiltersDF['Hidden'].astype(bool)
-                pageFiltersDF['Locked'] = pageFiltersDF['Locked'].astype(bool)
+                pageFiltersDF = pd.concat([pageFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)   
         except:
             pass
 
@@ -223,7 +271,6 @@ def export_report_objects(reportName):
             visualConfig = visual['config']
             visualConfigJson = json.loads(visualConfig)        
             visualID = visualConfigJson['name']
-            #print(visualConfigJson)
             visualType = "Unknown"
             visualX = visual['x']
             visualY = visual['y']
@@ -237,6 +284,9 @@ def export_report_objects(reportName):
             objectCount = 0
             dataVisual = False
             title = None
+            altText = None
+            showItemsNoData = False
+            slicerType = 'N/A'
 
             try:
                 objectCount = len(visualConfigJson['singleVisual']['prototypeQuery']['Select'])
@@ -272,11 +322,29 @@ def export_report_objects(reportName):
             if visualType in customVisualsDF['Custom Visual Name'].values:
                 customVisualFlag = True
 
-            new_data = {'Visual ID': visualID, 'Page Name': pageName, 'Title': title, 'Type': visualType, 'Hidden': visualHidden, 'Group': visualGroup, 'X': visualX, 'Y': visualY, 'Z': visualZ, 'Width': visualWidth, 'Height': visualHeight, 'Tab Order': tabOrder, 'Custom Visual': customVisualFlag, 'Object Count': objectCount, 'Data Visual': dataVisual}
-            visualDF = pd.concat([visualDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+            try:
+                altText = visualConfigJson['singleVisual']['vcObjects']['general'][0]['properties']['altText']['expr']['Literal']['Value']
+                altText = altText[1:-1]
+            except:
+                pass            
+            try:
+                sInd = visualConfigJson['singleVisual']['showAllRoles'][0]
+                if sInd == "Values":
+                    showItemsNoData = True
+            except:
+                pass
+            if visualType == 'slicer':
+                try:                    
+                    sT = visualConfigJson['singleVisual']['objects']['data'][0]['properties']['mode']['expr']['Literal']['Value']
+                    if sT == "'Basic'":
+                        slicerType = 'List'
+                    elif sT == "'Dropdown'":
+                        slicerType == 'Dropdown'
+                except:
+                    pass
 
-            visualDF['Hidden'] = visualDF['Hidden'].astype(bool)
-            visualDF['Group'] = visualDF['Group'].astype(bool)
+            new_data = {'Visual ID': visualID, 'Page Name': pageName, 'Title': title, 'Type': visualType, 'Hidden': visualHidden, 'Group': visualGroup, 'X': visualX, 'Y': visualY, 'Z': visualZ, 'Width': visualWidth, 'Height': visualHeight, 'Tab Order': tabOrder, 'Custom Visual': customVisualFlag, 'Object Count': objectCount, 'Data Visual': dataVisual, 'Show Items With No Data': showItemsNoData, 'Alt text': altText, 'Slicer Type': slicerType}
+            visualDF = pd.concat([visualDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)            
 
             # Visual Filters
             try:
@@ -284,10 +352,14 @@ def export_report_objects(reportName):
                 visualFiltersJson = json.loads(visualFilters)
 
                 for flt in visualFiltersJson:
-                    filterName = flt['name']
+                    filterName = None
                     filterType = flt['type']
                     filterLocked = False
                     filterHidden = False
+                    try:
+                        filterName = flt['name']
+                    except:
+                        pass                    
                     try:
                         filterLocked = flt['isLockedInViewMode']
                     except:
@@ -318,9 +390,7 @@ def export_report_objects(reportName):
                         pass
 
                     new_data = {'Visual ID': visualID, 'Page ID': pageID, 'Page Name': pageName, 'Filter Name': filterName, 'Type': filterType, 'Object Name': filterObjName, 'Object Type': filterObjType, 'Table Name': filterTblName, 'Hidden': filterHidden, 'Locked': filterLocked}
-                    visualFiltersDF = pd.concat([visualFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-                    visualFiltersDF['Hidden'] = visualFiltersDF['Hidden'].astype(bool)
-                    visualFiltersDF['Locked'] = visualFiltersDF['Locked'].astype(bool)
+                    visualFiltersDF = pd.concat([visualFiltersDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)   
             except:
                 pass
 
@@ -433,7 +503,6 @@ def export_report_objects(reportName):
                 viz3DF = pd.merge(viz3DF,viz1DF[['Data Point Location', 'Object', 'Active']], on='Object', how='left')
 
                 visualObjectsDF = pd.concat([visualObjectsDF,viz3DF[['Visual ID', 'Data Point Location', 'Object Name', 'Object Type', 'Table Name', 'Active', 'Sparkline']]], ignore_index=True)
-
             except:
                 pass
     
@@ -444,10 +513,21 @@ def export_report_objects(reportName):
             bName = bookmark['displayName']
             rptPageId = bookmark['explorationState']['activeSection']
 
-            new_data = {'Bookmark ID': bID, 'Bookmark Name': bName, 'Page ID': rptPageId}
+            for rptPg in bookmark['explorationState']['sections']:
+                for vc in bookmark['explorationState']['sections'][rptPg]['visualContainers']:
+                    vHidden = False
+                    try:
+                        hidden = bookmark['explorationState']['sections'][rptPg]['visualContainers'][vc]['singleVisual']['display']['mode']
+                        if hidden == 'hidden':
+                            vHidden = True
+                    except:
+                        pass
+
+            new_data = {'Bookmark ID': bID, 'Bookmark Name': bName, 'Page ID': rptPageId, 'Visual ID': vc, 'Visual Hidden': vHidden }
             bookmarksDF = pd.concat([bookmarksDF, pd.DataFrame(new_data, index=[0])], ignore_index=True)
 
         bookmarksDF = pd.merge(bookmarksDF, pageDF[['Page ID', 'Page Name']], on='Page ID', how='left')
+        bookmarksDF = bookmarksDF[['Bookmark ID', 'Bookmark Name', 'Page ID', 'Page Name', 'Visual ID', 'Visual Hidden']]
     except:
         pass
 
@@ -460,16 +540,36 @@ def export_report_objects(reportName):
     filter_counts = pageFiltersDF.groupby('Page ID').size().reset_index(name='Page Filter Count')
     pageDF = pd.merge(pageDF, filter_counts, on='Page ID', how='left')
     pageDF['Page Filter Count'].fillna(0, inplace=True)
-    pageDF['Page Filter Count'] = pageDF['Page Filter Count'].astype(int)
-    visualDF['Tab Order'] = visualDF['Tab Order'].astype(int)
-    visualDF['Custom Visual'] = visualDF['Custom Visual'].astype(bool)
-    visualObjectsDF['Active'] = visualObjectsDF['Active'].astype(bool)
-    visualObjectsDF['Sparkline'] = visualObjectsDF['Sparkline'].astype(bool)
-    reportFiltersDF['Hidden'] = reportFiltersDF['Hidden'].astype(bool)
-    reportFiltersDF['Locked'] = reportFiltersDF['Locked'].astype(bool)
-    visualDF['Object Count'] = visualDF['Object Count'].astype(int)
-    visualDF['Data Visual'] = visualDF['Data Visual'].astype(bool)
-    visualDF['Z'] = visualDF['Z'].astype(int)
+
+    # Update data types
+    int_columns = ['Page Count', 'Custom Visual Count','Theme Count','Image Count']
+    reportDF[int_columns] = reportDF[int_columns].astype(int)
+    
+    int_columns = ['Page Filter Count','Page Width','Page Height','Display Option','Visual Count']
+    pageDF[int_columns] = pageDF[int_columns].astype(int)
+    str_columns = ['Background','Wallpaper']
+    pageDF[str_columns] = pageDF[str_columns].astype(str)
+    pageDF['Hidden'] = pageDF['Hidden'].astype(bool)
+
+    int_columns = ['Tab Order','Object Count','Z']
+    visualDF[int_columns] = visualDF[int_columns].astype(int)
+
+    bool_columns = ['Custom Visual','Data Visual','Hidden','Group', 'Show Items With No Data']
+    visualDF[bool_columns] = visualDF[bool_columns].astype(bool)
+
+    bool_columns = ['Visual Hidden']
+    bookmarksDF[bool_columns] = bookmarksDF[bool_columns].astype(bool)
+
+    bool_columns = ['Active','Sparkline']
+    visualObjectsDF[bool_columns] = visualObjectsDF[bool_columns].astype(bool)
+    
+    bool_columns = ['Hidden','Locked']
+    reportFiltersDF[bool_columns] = reportFiltersDF[bool_columns].astype(bool)
+    visualFiltersDF[bool_columns] = visualFiltersDF[bool_columns].astype(bool)
+    pageFiltersDF[bool_columns] = pageFiltersDF[bool_columns].astype(bool)
+
+    int_columns = ['Type ID']
+    visualInteractionsDF[int_columns] = visualInteractionsDF[int_columns].astype(int)
 
     print('Report')
     display(reportDF)
@@ -493,5 +593,7 @@ def export_report_objects(reportName):
     display(imagesDF)
     print('Visual Objects')
     display(visualObjectsDF)
+    print('Visual Interactions')
+    display(visualInteractionsDF)
 
 export_report_objects("") # Enter Report Name
