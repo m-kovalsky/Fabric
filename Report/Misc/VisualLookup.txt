@@ -1,0 +1,41 @@
+VisualID	VisualName
+esriVisual	ArcGIS Maps
+keyDriversVisual	Key Drivers
+pythonVisual	Python Visual
+scriptVisual	R Visual
+kpi	KPI
+multiRowCard	Multi-row Card
+gauge	Gauge
+filledMap	Filled Map
+map	Map
+treemap	Treemap
+donutChart	Donut Chart
+pieChart	Pie Chart
+funnel	Funnel
+waterfallChart	Waterfall Chart
+ribbonChart	Ribbon Chart
+lineClusteredColumnComboChart	Line and Clustered Column Chart
+lineStackedColumnComboChart	Line and Stacked Column Chart
+stackedAreaChart	Stacked Area Chart
+areaChart	Area Chart
+barChart	Bar Chart
+clusteredBarChart	Clustered Bar Chart
+hundredPercentStackedBarChart	100% Stacked Bar Chart
+hundredPercentStackedColumnChart	100% Stacked Column Chart
+card	Card
+slicer	Slicer
+textbox	Text Box
+actionButton	Action Button
+clusteredColumnChart	Clustered Column Chart
+image	Image
+basicShape	Basic Shape
+azureMap	Azure Map
+columnChart	Column Chart
+decompositionTreeVisual	Decomposition Tree
+lineChart	Line Chart
+pivotTable	Matrix
+qnaVisual	Q&A
+scatterChart	Scatter Chart
+tableEx	Table
+visualGroup	Visual Group
+shape	Shape
