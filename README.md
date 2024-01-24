@@ -205,6 +205,13 @@ x = fabric.list_datasets()
 x
 ```
 
+#### Shows a list of datasets in your current workspace with additional properties
+```python
+import sempy.fabric as fabric
+x = fabric.list_datasets(additional_xmla_properties=['Model.DefaultMode', 'Model.DirectLakeBehavior', 'CompatibilityLevel'])
+x
+```
+
 #### Shows the dataset ID for a given dataset name
 ```python
 import sempy.fabric as fabric
