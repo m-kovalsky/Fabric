@@ -112,7 +112,14 @@ import sempy.fabric as fabric
 fabric.refresh_tom_cache()
 ```
 
-## Workspace/Lakehouse objects
+## Capacity/Workspace/Lakehouse objects
+
+#### Show a list of all accessible capacities
+```python
+import sempy.fabric as fabric
+x = fabric.list_capacities()
+x
+```
 
 #### Show a list of all objects in your workspace
 ```python
