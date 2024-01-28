@@ -243,7 +243,7 @@ workspaceName = "" #Enter the workspace name to be used as a filter
 x = fabric.list_workspaces()
 filter_condition = [workspaceName]
 x = x[x['Name'].isin(filter_condition)]
-y = x["Id"].values[0]
+y = x["Id"].iloc[0]
 z = fabric.resolve_workspace_name(y)
 z
 ```
