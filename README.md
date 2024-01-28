@@ -112,7 +112,7 @@ import sempy.fabric as fabric
 fabric.refresh_tom_cache()
 ```
 
-## Capacity/Workspace/Lakehouse objects
+## Capacities
 
 #### Show a list of all accessible capacities
 ```python
@@ -121,12 +121,14 @@ x = fabric.list_capacities()
 x
 ```
 
-#### Show a list of all objects in your workspace
+#### Gets the Artifact ID (of the notebook)
 ```python
 import sempy.fabric as fabric
-x = fabric.list_items()
+x = fabric.get_artifact_id()
 x
 ```
+
+## Lakehouse
 
 #### Gets the Lakehouse ID from the current lakehouse
 ```python
@@ -135,10 +137,85 @@ x = fabric.get_lakehouse_id()
 x
 ```
 
-#### Gets the Artifact ID (of the notebook)
+#### Show a list of the tables in your lakehouse using the [List Tables API](https://learn.microsoft.com/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP)
+```python
+import sempy
+import sempy.fabric as fabric
+import pandas as pd
+import json
+
+def get_lakehouse_tables(workspaceId = None, lakehouseId = None):
+
+    if workspaceId == None:
+        workspaceId = fabric.get_workspace_id()
+    if lakehouseId == None:
+        lakehouseId = fabric.get_lakehouse_id()
+
+    client = fabric.FabricRestClient()
+    wName = fabric.resolve_workspace_name(workspaceId)
+    response = client.get(f"/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables")
+    tableList = response.json()['data']
+    dfItems = fabric.list_items()
+    dfItems = dfItems[dfItems['Id'] == lakehouseId]
+    lakehouseName = dfItems['Display Name'].iloc[0]
+
+    df = pd.DataFrame({'Workspace Name': [], 'Lakehouse Name': [], 'Table Name': [], 'Type': [], 'Location': [], 'Format': []})
+
+    for t in tableList:
+        tName = t['name']
+        tType = t['type']
+        tLocation = t['location']
+        tFormat = t['format']
+
+        new_data = {'Workspace Name': wName, 'Lakehouse Name': lakehouseName, 'Table Name': tName, 'Type': tType, 'Location': tLocation, 'Format': tFormat}
+        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+
+    return df
+
+get_lakehouse_tables()
+```
+
+#### Load a parquet file within your lakehouse as a delta table in your lakehouse
+```python
+import sempy
+import sempy.fabric as fabric
+import pandas as pd
+
+def load_parquet_table(tablename, source, mode = "Overwrite", workspaceId = None, lakehouseId = None):
+
+    #Mode values: Overwrite; Append
+    if workspaceId == None:
+        workspaceId = fabric.get_workspace_id()
+    if lakehouseId == None:
+        lakehouseId = fabric.get_lakehouse_id()
+    
+    payload = {
+    "relativePath": source,
+    "pathType": "File",
+    "mode": mode,
+    "formatOptions": {
+        "format": "Parquet",
+        "header": "true"
+    }
+    }
+
+    client = fabric.FabricRestClient()
+    response = client.post(f"/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables/{tableName}/load",json= payload)
+    
+    return response
+
+load_parquet_table(
+     tablename = "TestFile" #Enter the name of the table to be created
+    ,source = "Files/Folder/Myfilename.parquet" #Enter the file path of your Parquet file
+    )
+```
+
+## Workspaces
+
+#### Show a list of all objects in your workspace
 ```python
 import sempy.fabric as fabric
-x = fabric.get_artifact_id()
+x = fabric.list_items()
 x
 ```
 
@@ -206,39 +283,6 @@ x
 import sempy.fabric as fabric
 x = fabric.get_workspace_id()
 x
-```
-
-#### Show a list of the tables in your lakehouse using the [List Tables API](https://learn.microsoft.com/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP)
-```python
-import sempy
-import sempy.fabric as fabric
-import pandas as pd
-import json
-
-def get_lakehouse_tables(workspaceId = fabric.get_workspace_id(), lakehouseId = fabric.get_lakehouse_id()):
-
-    client = fabric.FabricRestClient()
-    wName = fabric.resolve_workspace_name(workspaceId)
-    response = client.get(f"/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables")
-    tableList = response.json()['data']
-    dfItems = fabric.list_items()
-    dfItems = dfItems[dfItems['Id'] == lakehouseId]
-    lakehouseName = dfItems['Display Name'].iloc[0]
-
-    df = pd.DataFrame({'Workspace Name': [], 'Lakehouse Name': [], 'Table Name': [], 'Type': [], 'Location': [], 'Format': []})
-
-    for t in tableList:
-        tName = t['name']
-        tType = t['type']
-        tLocation = t['location']
-        tFormat = t['format']
-
-        new_data = {'Workspace Name': wName, 'Lakehouse Name': lakehouseName, 'Table Name': tName, 'Type': tType, 'Location': tLocation, 'Format': tFormat}
-        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-
-    return df
-
-get_lakehouse_tables()
 ```
 
 ## Reports
