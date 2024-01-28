@@ -171,6 +171,20 @@ z = fabric.resolve_workspace_name(y)
 z
 ```
 
+#### Show the Capacity SKU, Region, State for your workspaces
+```python
+import sempy
+import sempy.fabric as fabric
+import pandas as pd
+
+dfC = fabric.list_capacities()
+dfW = fabric.list_workspaces().sort_values(by='Name', ascending=True)
+dfC.rename(columns={'Id': 'Capacity Id'}, inplace=True)
+dfC['Capacity Id'] = dfC['Capacity Id'].str.upper()
+x = pd.merge(dfW, dfC[['Capacity Id', 'Sku', 'Region', 'State']], on='Capacity Id', how='inner')
+x
+```
+
 #### Find the workspace ID for a given workspace name
 ```python
 import sempy.fabric as fabric
