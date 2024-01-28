@@ -208,6 +208,37 @@ x = fabric.get_workspace_id()
 x
 ```
 
+#### Show a list of the tables in your lakehouse using the [List Tables API](https://learn.microsoft.com/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP)
+```python
+import sempy
+import sempy.fabric as fabric
+import pandas as pd
+import json
+
+def get_lakehouse_tables(workspaceId = fabric.get_workspace_id(), lakehouseId = fabric.get_lakehouse_id()):
+
+    client = fabric.FabricRestClient()
+    wName = fabric.resolve_workspace_name(workspaceId)
+    response = client.get(f"/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables")
+    tableList = response.json()['data']
+    dfItems = fabric.list_items()
+    dfItems = dfItems[dfItems['Id'] == lakehouseId]
+    lakehouseName = dfItems['Display Name'].iloc[0]
+
+    df = pd.DataFrame({'Workspace Name': [], 'Lakehouse Name': [], 'Table Name': [], 'Type': [], 'Location': [], 'Format': []})
+
+    for t in tableList:
+        tName = t['name']
+        tType = t['type']
+        tLocation = t['location']
+        tFormat = t['format']
+
+        new_data = {'Workspace Name': wName, 'Lakehouse Name': lakehouseName, 'Table Name': tName, 'Type': tType, 'Location': tLocation, 'Format': tFormat}
+        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+
+    return df
+```
+
 ## Reports
 
 #### Shows a list of reports within the workspace
