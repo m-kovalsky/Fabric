@@ -55,7 +55,7 @@ dir(sempy.fabric)
 #### Show useful information about a given function
 ```python
 import sempy.fabric as fabric
-help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in the dir(sempy.fabric) output
+help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in dir(sempy.fabric) output
 ```
 
 #### Show the version of a Python library within your notebook
