@@ -237,6 +237,8 @@ def get_lakehouse_tables(workspaceId = fabric.get_workspace_id(), lakehouseId = 
         df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
 
     return df
+
+get_lakehouse_tables()
 ```
 
 ## Reports
