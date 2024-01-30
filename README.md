@@ -676,7 +676,7 @@ df = df.explode('Fabric/Power BI SKUs', ignore_index=True)
 df
 ```
 
-#### Show the Direct Lake guardrails for your workspace's capacity
+#### Show the Direct Lake guardrails for your workspace
 ```python
 import sempy
 import sempy.fabric as fabric
