@@ -682,21 +682,29 @@ import sempy
 import sempy.fabric as fabric
 import pandas as pd
 
-workspaceName = #Enter workspace name
-dfC = fabric.list_capacities()
-dfW = fabric.list_workspaces().sort_values(by='Name', ascending=True)
-dfC.rename(columns={'Id': 'Capacity Id'}, inplace=True)
-dfC['Capacity Id'] = dfC['Capacity Id'].str.upper()
-dfCW = pd.merge(dfW, dfC[['Capacity Id', 'Sku', 'Region', 'State']], on='Capacity Id', how='inner')
-sku_value = dfCW.loc[dfCW['Name'] == workspaceName, 'Sku'].iloc[0]
-sku_value
+def get_sku_size(workspaceName):
 
-url = "https://learn.microsoft.com/power-bi/enterprise/directlake-overview"
+    dfC = fabric.list_capacities()
+    dfW = fabric.list_workspaces().sort_values(by='Name', ascending=True)
+    dfC.rename(columns={'Id': 'Capacity Id'}, inplace=True)
+    dfC['Capacity Id'] = dfC['Capacity Id'].str.upper()
+    dfCW = pd.merge(dfW, dfC[['Capacity Id', 'Sku', 'Region', 'State']], on='Capacity Id', how='inner')
+    sku_value = dfCW.loc[dfCW['Name'] == workspaceName, 'Sku'].iloc[0]
+    
+    return sku_value
 
-tables = pd.read_html(url)
-df = tables[0]
-df['Fabric/Power BI SKUs'] = df['Fabric/Power BI SKUs'].str.split('/')
-df = df.explode('Fabric/Power BI SKUs', ignore_index=True)
-filtered_df = df[df['Fabric/Power BI SKUs'] == sku_value]
-filtered_df
+sku_value = get_sku_size("") #Enter workspace name
+
+def get_directlake_guardrails(skuSize):
+    url = "https://learn.microsoft.com/power-bi/enterprise/directlake-overview"
+
+    tables = pd.read_html(url)
+    df = tables[0]
+    df['Fabric/Power BI SKUs'] = df['Fabric/Power BI SKUs'].str.split('/')
+    df = df.explode('Fabric/Power BI SKUs', ignore_index=True)
+    filtered_df = df[df['Fabric/Power BI SKUs'] == sku_value]
+    
+    return filtered_df
+
+get_directlake_guardrails(sku_value)
 ```
