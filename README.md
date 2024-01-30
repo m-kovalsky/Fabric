@@ -661,3 +661,17 @@ SUMMARIZECOLUMNS(
 
 SELECT * FROM $SYSTEM.DISCOVER_SESSIONS
 ```
+
+## Direct Lake
+
+#### Show the guardrails by SKU for Direct Lake models
+```python
+import pandas as pd
+url = "https://learn.microsoft.com/power-bi/enterprise/directlake-overview"
+
+tables = pd.read_html(url)
+df = tables[0]
+df['Fabric/Power BI SKUs'] = df['Fabric/Power BI SKUs'].str.split('/')
+df = df.explode('Fabric/Power BI SKUs', ignore_index=True)
+df
+```
