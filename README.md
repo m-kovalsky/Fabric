@@ -175,36 +175,58 @@ def get_lakehouse_tables(workspaceId = None, lakehouseId = None):
 get_lakehouse_tables()
 ```
 
-#### Load a parquet file within your lakehouse as a delta table in your lakehouse
+#### Load a parquet or csv file within your lakehouse as a delta table in your lakehouse
 ```python
 import sempy
 import sempy.fabric as fabric
 import pandas as pd
+import os
 
-def load_parquet_table(tablename, source, mode = "Overwrite", workspaceId = None, lakehouseId = None):
+def load_table(tablename, source, mode = None, workspaceId = None, lakehouseId = None):
 
     #Mode values: Overwrite; Append
     if workspaceId == None:
         workspaceId = fabric.get_workspace_id()
     if lakehouseId == None:
         lakehouseId = fabric.get_lakehouse_id()
+    if mode == None:
+        mode = "Overwrite"
+    if not mode in ["Overwrite", "Append"]:
+        return print("Invalid Mode value. Mode must be either 'Overwrite' or 'Append'.")
+
+    payload = None
+    file_extension = os.path.splitext(source)[1]
     
-    payload = {
-    "relativePath": source,
-    "pathType": "File",
-    "mode": mode,
-    "formatOptions": {
-        "format": "Parquet",
-        "header": "true"
-    }
-    }
+    if file_extension == ".csv":
+        payload = {
+        "relativePath": source,
+        "pathType": "File",
+        "mode": mode,
+        "formatOptions": {
+            "format": "Csv",
+            "header": "true",
+            "delimiter": ","
+        }
+        }
+    elif file_extension == ".parquet":
+        payload = {
+        "relativePath": source,
+        "pathType": "File",
+        "mode": mode,
+        "formatOptions": {
+            "format": "Parquet",
+            "header": "true"
+        }
+        }
+    else:
+        return print("Invalid file extension. Only .csv and .parquet are supported.")
 
     client = fabric.FabricRestClient()
     response = client.post(f"/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables/{tableName}/load",json= payload)
     
     return response
 
-load_parquet_table(
+load_table(
      tablename = "TestFile" #Enter the name of the table to be created
     ,source = "Files/Folder/Myfilename.parquet" #Enter the file path of your Parquet file
     )
