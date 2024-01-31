@@ -390,6 +390,17 @@ x_styled = x.style.format({'Query': format_sql_query})
 x_styled
 ```
 
+#### List the tables of a Direct Lake semantic model and show the lakehouse table from which it derives ('Query')
+```python
+import sempy
+import sempy.fabric as fabric
+datasetName = "" #Enter dataset name
+
+dfP = fabric.list_partitions(datasetName)
+dfP_filtered = dfP[dfP['Mode'] == 'DirectLake'][['Table Name', 'Query']]
+dfP_filtered
+```
+
 #### List the measures within a given dataset (semantic model)
 ```python
 import sempy.fabric as fabric
