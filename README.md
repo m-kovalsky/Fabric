@@ -137,6 +137,37 @@ x = fabric.get_lakehouse_id()
 x
 ```
 
+#### Gets the SQL Endpoint for a given workspace/lakehouse
+```python
+import sempy
+import sempy.fabric as fabric
+import pandas as pd
+
+def get_sql_endpoint(workspaceName = None, lakehouseName = None):
+
+    if workspaceName == None:        
+        workspaceID = fabric.get_workspace_id()
+    else:
+        workspaceID = fabric.resolve_workspace_id(workspaceName)
+    if lakehouseName == None:
+        lakehouseID = fabric.get_lakehouse_id()
+    else:
+        dfItems = fabric.list_items()
+        dfItems = dfItems[dfItems['Display Name'] == lakehouseName]
+        lakehouseID = dfItems['Id'].iloc[0]
+
+    workspaceID = fabric.get_workspace_id()
+    lakehouseID = fabric.get_lakehouse_id()
+    client = fabric.FabricRestClient()
+    response = client.get(f"/v1/workspaces/{workspaceID}/lakehouses/{lakehouseID}")
+    responseJson = response.json()
+    sqlEndpoint = responseJson['properties']['sqlEndpointProperties']['connectionString']
+    
+    return sqlEndpoint
+
+get_sql_endpoint()
+```
+
 #### Show a list of the tables in your lakehouse using the [List Tables API](https://learn.microsoft.com/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP)
 ```python
 import sempy
