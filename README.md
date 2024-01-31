@@ -153,7 +153,7 @@ def get_sql_endpoint(workspaceName = None, lakehouseName = None):
         lakehouseID = fabric.get_lakehouse_id()
     else:
         dfItems = fabric.list_items()
-        dfItems = dfItems[dfItems['Display Name'] == lakehouseName]
+        dfItems = dfItems[dfItems['Display Name'] == lakehouseName and dfItems['Type'] == "Lakehouse"]
         lakehouseID = dfItems['Id'].iloc[0]
 
     workspaceID = fabric.get_workspace_id()
