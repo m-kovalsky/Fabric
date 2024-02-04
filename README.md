@@ -347,6 +347,24 @@ x = fabric.list_reports()
 x
 ```
 
+#### Visualize a Power BI Report within a Fabric notebook
+```python
+import sempy
+import sempy.fabric as fabric
+from powerbiclient import Report
+
+def launch_report(reportName):
+
+    dfR = fabric.list_reports()
+    filtered_df = dfR[(dfR['Name'] == reportName)]
+    report_id = filtered_df['Id'].iloc[0]
+
+    report = Report(group_id=None, report_id=report_id)
+    report
+
+launch_report("") #Enter report name
+```
+
 ## Dataset and dataset objects
 
 #### Shows a list of datasets in your current workspace
