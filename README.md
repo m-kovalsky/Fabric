@@ -360,7 +360,7 @@ def launch_report(reportName):
     report_id = filtered_df['Id'].iloc[0]
 
     report = Report(group_id=None, report_id=report_id)
-    report
+    return report
 
 launch_report("") #Enter report name
 ```
