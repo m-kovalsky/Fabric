@@ -603,6 +603,7 @@ x
 
 #### Connect to the [Tabular Object Model](https://learn.microsoft.com/analysis-services/tom/introduction-to-the-tabular-object-model-tom-in-analysis-services-amo?view=asallproducts-allversions) ([TOM](https://learn.microsoft.com/dotnet/api/microsoft.analysisservices.tabular.model?view=analysisservices-dotnet)); prints each table name
 ```python
+import sempy
 import sempy.fabric as fabric
 from sempy.fabric._client import DatasetXmlaClient
 from sempy.fabric._cache import _get_or_create_workspace_client
@@ -616,6 +617,69 @@ m = ds.Model
 
 for t in m.Tables:
 	print(t.Name)
+```
+
+#### Create a new measure in a semantic model
+```python
+import sempy
+import sempy.fabric as fabric
+sempy.fabric._client._utils._init_analysis_services()
+from sempy.fabric._cache import _get_or_create_workspace_client
+from sempy.fabric._client._connection_mode import ConnectionMode
+import Microsoft.AnalysisServices.Tabular as TOM
+
+workspaceName = '' #Enter workspace name
+datasetName = '' #Enter dataset name
+tom_server = _get_or_create_workspace_client(workspaceName).get_dataset_client(datasetName, ConnectionMode.XMLA)._get_connected_dataset_server(readonly=False)
+
+tName = '' #Enter table name for your measure
+mName = '' #Enter measure name
+mExpr = '' #Enter DAX expression
+measure = TOM.Measure()
+measure.Name = mName
+measure.Expression = mExpr
+for d in tom_server.Databases:
+    if d.Name == datasetName:
+        print(f"Updating {d.Name}...")
+        m = d.Model
+        for t in m.Tables:
+            if t.Name == tName:
+                if not any(existing_measure.Name == mName for existing_measure in t.Measures):
+                    t.Measures.Add(measure)
+                    print(f"'{mName}' added to the '{tName}' table.")
+                else:
+                    print(f"'{mName}' already exists as a measure. No measure was added.")
+        m.SaveChanges()
+```
+
+#### Update the DAX expression of an existing measure in a semantic model
+```python
+import sempy
+import sempy.fabric as fabric
+sempy.fabric._client._utils._init_analysis_services()
+from sempy.fabric._cache import _get_or_create_workspace_client
+from sempy.fabric._client._connection_mode import ConnectionMode
+import Microsoft.AnalysisServices.Tabular as TOM
+
+workspaceName = '' #Enter workspace name
+datasetName = '' #Enter dataset name
+tom_server = _get_or_create_workspace_client(workspaceName).get_dataset_client(datasetName, ConnectionMode.XMLA)._get_connected_dataset_server(readonly=False)
+
+mName = '' #Enter measure name
+mExpr = '' #Enter DAX expression
+measure = TOM.Measure()
+measure.Name = mName
+measure.Expression = mExpr
+for d in tom_server.Databases:
+    if d.Name == datasetName:
+        print(f"Updating {d.Name}...")
+        m = d.Model
+        for t in m.Tables:
+            for ms in t.Measures:
+                if ms.Name == mName:
+                    ms.Expression = mExpr
+                    print(f"The DAX expression for '{mName}' has been updated.")
+        m.SaveChanges()
 ```
 
 ## DAX
