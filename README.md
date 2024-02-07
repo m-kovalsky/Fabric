@@ -44,16 +44,19 @@ import pyarrow.dataset as ds
 import pyarrow.parquet as pq
 import os
 from delta.tables import DeltaTable
+from powerbiclient import Report
 ```
 
 #### Show the directory of all SemPy functions
 ```python
+import sempy
 import sempy.fabric
 dir(sempy.fabric)
 ```
 
 #### Show useful information about a given function
 ```python
+import sempy
 import sempy.fabric as fabric
 help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in dir(sempy.fabric) output
 ```
@@ -61,7 +64,7 @@ help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in
 #### Show the version of a Python library within your notebook
 ```python
 import pkg_resources
-library_name = "semantic-link" #Enter the name of the library
+library_name = 'semantic-link' #Enter the name of the library
 version = pkg_resources.get_distribution(library_name).version
 version
 ```
@@ -82,7 +85,7 @@ print(f"The latest version of '{library_name}' is: {latest_version}")
 import pkg_resources
 import requests
 
-library_name = "semantic-link" #Enter the name of the library
+library_name = 'semantic-link' #Enter the name of the library
 version = pkg_resources.get_distribution(library_name).version
 
 url = f"https://pypi.org/pypi/{library_name}/json"
@@ -101,13 +104,14 @@ else:
 import pkg_resources
 import pandas as pd
 installed_packages = [pkg.key for pkg in pkg_resources.working_set]
-title = "Installed Packages"
+title = 'Installed Packages'
 df = pd.DataFrame({title: installed_packages})
 display(df)
 ```
 
 #### Refresh the TOM cache. If the semantic model has been updated during your notebook session, run this script to ensure you get the latest model metadata.
 ```python
+import sempy
 import sempy.fabric as fabric
 fabric.refresh_tom_cache()
 ```
@@ -116,6 +120,7 @@ fabric.refresh_tom_cache()
 
 #### Show a list of all accessible capacities
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.list_capacities()
 x
@@ -123,6 +128,7 @@ x
 
 #### Gets the Artifact ID (of the notebook)
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.get_artifact_id()
 x
@@ -132,6 +138,7 @@ x
 
 #### Gets the Lakehouse ID from the current lakehouse
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.get_lakehouse_id()
 x
@@ -153,7 +160,7 @@ def get_sql_endpoint(workspaceName = None, lakehouseName = None):
         lakehouseID = fabric.get_lakehouse_id()
     else:
         dfItems = fabric.list_items()
-        dfItems = dfItems[dfItems['Display Name'] == lakehouseName and dfItems['Type'] == "Lakehouse"]
+        dfItems = dfItems[dfItems['Display Name'] == lakehouseName and dfItems['Type'] == 'Lakehouse']
         lakehouseID = dfItems['Id'].iloc[0]
 
     workspaceID = fabric.get_workspace_id()
@@ -221,14 +228,14 @@ def load_table(tablename, source, mode = None, workspaceId = None, lakehouseId =
     if lakehouseId == None:
         lakehouseId = fabric.get_lakehouse_id()
     if mode == None:
-        mode = "Overwrite"
-    if not mode in ["Overwrite", "Append"]:
+        mode = 'Overwrite'
+    if not mode in ['Overwrite', 'Append']:
         return print("Invalid Mode value. Mode must be either 'Overwrite' or 'Append'.")
 
     payload = None
     file_extension = os.path.splitext(source)[1]
     
-    if file_extension == ".csv":
+    if file_extension == '.csv':
         payload = {
         "relativePath": source,
         "pathType": "File",
@@ -239,7 +246,7 @@ def load_table(tablename, source, mode = None, workspaceId = None, lakehouseId =
             "delimiter": ","
         }
         }
-    elif file_extension == ".parquet":
+    elif file_extension == '.parquet':
         payload = {
         "relativePath": source,
         "pathType": "File",
@@ -258,8 +265,8 @@ def load_table(tablename, source, mode = None, workspaceId = None, lakehouseId =
     return response
 
 load_table(
-     tablename = "TestFile" #Enter the name of the table to be created
-    ,source = "Files/Folder/Myfilename.parquet" #Enter the file path of your Parquet file
+     tablename = 'TestFile' #Enter the name of the table to be created
+    ,source = 'Files/Folder/Myfilename.parquet' #Enter the file path of your Parquet file
     )
 ```
 
@@ -267,6 +274,7 @@ load_table(
 
 #### Show a list of all objects in your workspace
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.list_items()
 x
@@ -274,6 +282,7 @@ x
 
 #### Shows a list of your accessible workspaces, sorted alphabetically
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.list_workspaces().sort_values(by='Name', ascending=True)
 x
@@ -281,8 +290,9 @@ x
 
 #### Filter to a particular workspace
 ```python
+import sempy
 import sempy.fabric as fabric
-workspaceName = "" #Enter the workspace name to be used as a filter
+workspaceName = '' #Enter the workspace name to be used as a filter
 x = fabric.list_workspaces()
 filter_condition = [workspaceName]
 x = x[x['Name'].isin(filter_condition)]
@@ -291,8 +301,9 @@ x
 
 #### Filter to a particular workspace and extract the value
 ```python
+import sempy
 import sempy.fabric as fabric
-workspaceName = "" #Enter the workspace name to be used as a filter
+workspaceName = '' #Enter the workspace name to be used as a filter
 x = fabric.list_workspaces()
 filter_condition = [workspaceName]
 x = x[x['Name'].isin(filter_condition)]
@@ -317,22 +328,25 @@ x
 
 #### Find the workspace ID for a given workspace name
 ```python
+import sempy
 import sempy.fabric as fabric
-x = "" #Enter the workspace name
+x = '' #Enter the workspace name
 id = fabric.resolve_workspace_id(x)
 id
 ```
 
 #### Find the workspace name for a given workspace ID
 ```python
+import sempy
 import sempy.fabric as fabric
-id = "" #Enter the workspace ID
+id = '' #Enter the workspace ID
 x = fabric.resolve_workspace_name(id)
 x
 ```
 
 #### Get the current workspace ID
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.get_workspace_id()
 x
@@ -342,6 +356,7 @@ x
 
 #### Shows a list of reports within the workspace
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.list_reports()
 x
@@ -362,13 +377,14 @@ def launch_report(reportName):
     report = Report(group_id=None, report_id=report_id)
     return report
 
-launch_report("") #Enter report name
+launch_report('') #Enter report name
 ```
 
 ## Dataset and dataset objects
 
 #### Shows a list of datasets in your current workspace
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.list_datasets()
 x
@@ -376,6 +392,7 @@ x
 
 #### Shows a list of datasets in your current workspace with additional properties
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.list_datasets(additional_xmla_properties=['Model.DefaultMode', 'Model.DirectLakeBehavior', 'CompatibilityLevel'])
 x
@@ -383,8 +400,9 @@ x
 
 #### Shows the dataset ID for a given dataset name
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter your dataset name
+datasetName = '' #Enter your dataset name
 x = fabric.list_datasets()
 x = x[x['Dataset Name'] == datasetName]
 datasetID = x["Dataset ID"].values[0]
@@ -393,43 +411,48 @@ datasetID
 
 #### Shows the [TMSL](https://learn.microsoft.com/analysis-services/tmsl/tabular-model-scripting-language-tmsl-reference?view=asallproducts-allversions) for a given dataset
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter your dataset name
-workspaceName = "" #Enter your workspace name
+datasetName = '' #Enter your dataset name
+workspaceName = '' #Enter your workspace name
 x = fabric.get_tmsl(datasetName, workspaceName)
 print(x)
 ```
 
 #### List the tables within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_tables(datasetName)
 x
 ```
 
 #### List the columns within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_columns(datasetName)
 x
 ```
 
 #### List the partitions within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_partitions(datasetName)
 x
 ```
 
 #### List the partitions within a given dataset (semantic model) and properly format the Query column
 ```python
+import sempy
 import sempy.fabric as fabric
 import pandas as pd
 
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_partitions(datasetName)
 
 def format_sql_query(value):
@@ -443,7 +466,7 @@ x_styled
 ```python
 import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 
 dfP = fabric.list_partitions(datasetName)
 dfP_filtered = dfP[dfP['Mode'] == 'DirectLake'][['Table Name', 'Query']]
@@ -452,16 +475,18 @@ dfP_filtered
 
 #### List the measures within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_measures(datasetName)
 x
 ```
 
 #### List the measures within a given dataset (semantic model) and properly format the Measure Expression column
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_measures(datasetName)
 
 def format_sql_query(value):
@@ -473,64 +498,72 @@ x_styled
 
 #### List the hierarchies within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_hierarchies(datasetName)
 x
 ```
 
 #### List the relationships within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_relationships(datasetName)
 x
 ```
 
 #### Plot the relationships for a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 relationships = fabric.list_relationships(datasetName)
 plot_relationship_metadata(relationships)
 ```
 
 #### List the roles within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.get_roles(datasetName)
 x
 ```
 
 #### List the roles and role members within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.get_roles(dataset = datasetName, include_members = True)
 x
 ```
 
 #### List the row level security (RLS) for each role within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.get_row_level_security_permissions(datasetName)
 x
 ```
 
 #### List the translations within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_translations(datasetName)
 x
 ```
 
 #### List the expressions (parameters) within a given dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_expressions(datasetName)
 x
 ```
@@ -541,48 +574,53 @@ Valid options for refresh_type: 'full', 'automatic', 'dataOnly', 'calculate', 'c
 
 #### Refresh a dataset
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
-fabric.refresh_dataset(dataset = datasetName, refresh_type = "full")
+datasetName = '' #Enter dataset name
+fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full')
 ```
 
 #### Refresh specific table(s) in a dataset
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 my_objects = [
     {"table": "tableName1"}, #Update 'tableName1' with your table name
     {"table": "tableName2"}  #Update 'tableName2' with your table name
 ]
-fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
+fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = my_objects)
 ```
 
 #### Refresh specific partition(s) in a dataset
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 my_objects = [
     {"table": "table1", "partition": "partition1"}, #Update 'table1' with your table name and 'partition1' with the partition name
     {"table": "table1", "partition": "partition2"}  #Update 'table1' with your table name and 'partition2' with the partition name
 ]
-fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
+fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = my_objects)
 ```
 
 #### Refresh a combination of tables/partition(s) in a dataset
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 my_objects = [
     {"table": "table1"}, #Update 'table1' with your table name
     {"table": "table2", "partition": "partition2"}  #Update 'table2' with your table name and 'partition2' with the partition name
 ]
-fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
+fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = my_objects)
 ```
 
 #### Show refresh requests for a given dataset
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.list_refresh_requests(datasetName)
 x
 ```
@@ -591,9 +629,10 @@ x
 
 #### Show a preview of the data in a given table from a dataset (semantic model)
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
-tableName = "" #Enter table name
+datasetName = '' #Enter dataset name
+tableName = '' #Enter table name
 rowLimit = 100
 x = fabric.read_table(datasetName,tableName,False,rowLimit)
 x
@@ -608,8 +647,8 @@ import sempy.fabric as fabric
 from sempy.fabric._client import DatasetXmlaClient
 from sempy.fabric._cache import _get_or_create_workspace_client
 sempy.fabric._client._utils._init_analysis_services()
-workspaceName = "" #Enter workspace name
-datasetName = "" #Enter dataset name
+workspaceName = '' #Enter workspace name
+datasetName = '' #Enter dataset name
 workspace_client = _get_or_create_workspace_client(workspaceName)
 ds = workspace_client.get_dataset(datasetName)
 
@@ -708,8 +747,9 @@ tom_server.Dispose()
 
 #### Run DAX via evaluate_dax()
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
     datasetName,
     """
@@ -723,8 +763,9 @@ x
 
 #### Run [Dynamic Management Views](https://learn.microsoft.com/analysis-services/instances/use-dynamic-management-views-dmvs-to-monitor-analysis-services?view=asallproducts-allversions) (DMVs) via evaluate_dax()
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
         datasetName,
         """
@@ -746,8 +787,9 @@ x
 
 #### Examples using the new 'INFO' DAX functions
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
     datasetName,
     """
@@ -759,8 +801,9 @@ x
 ```
 
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
     datasetName,
     """
@@ -772,8 +815,9 @@ x
 ```
 
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
     datasetName,
     """
@@ -785,8 +829,9 @@ x
 ```
 
 ```python
+import sempy
 import sempy.fabric as fabric
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
     datasetName,
     """
@@ -800,6 +845,7 @@ x
 
 #### Run a single measure against 1+ columns in your dataset
 ```python
+import sempy
 import sempy.fabric as fabric
 x = fabric.evaluate_measure(
     "DatasetName", #Enter your dataset name
@@ -835,7 +881,7 @@ SELECT * FROM $SYSTEM.DISCOVER_SESSIONS
 #### Show the guardrails by SKU for Direct Lake models
 ```python
 import pandas as pd
-url = "https://learn.microsoft.com/power-bi/enterprise/directlake-overview"
+url = 'https://learn.microsoft.com/power-bi/enterprise/directlake-overview'
 
 tables = pd.read_html(url)
 df = tables[0]
@@ -861,10 +907,10 @@ def get_sku_size(workspaceName):
     
     return sku_value
 
-sku_value = get_sku_size("") #Enter workspace name
+sku_value = get_sku_size('') #Enter workspace name
 
 def get_directlake_guardrails(skuSize):
-    url = "https://learn.microsoft.com/power-bi/enterprise/directlake-overview"
+    url = 'https://learn.microsoft.com/power-bi/enterprise/directlake-overview'
 
     tables = pd.read_html(url)
     df = tables[0]
