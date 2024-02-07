@@ -682,6 +682,28 @@ for d in tom_server.Databases:
         m.SaveChanges()
 ```
 
+#### Example code to make sure you always get the latest model metadata
+```python
+import sempy
+import sempy.fabric as fabric
+from sempy.fabric._client import DatasetXmlaClient
+from sempy.fabric._cache import _get_or_create_workspace_client
+sempy.fabric._client._utils._init_analysis_services()
+workspaceName = '' #Enter workspace name
+datasetName = '' #Enter dataset name
+
+tom_server = _get_or_create_workspace_client(workspaceName)._create_tom_server(False)
+for d in tom_server.Databases:
+    if d.Name == datasetName:
+       m = d.Model
+       for t in m.Tables:
+         for ms in t.Measures:
+            print(ms.Name + ' : ' + ms.Expression)
+
+tom_server.Disconnect(True)
+tom_server.Dispose()
+```
+
 ## DAX
 
 #### Run DAX via evaluate_dax()
