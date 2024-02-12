@@ -23,4 +23,4 @@ def clear_cache(datasetName):
         outputtext = f"Dataset '{datasetName}' does not exist in this workspace."
     return outputtext
 
-clear_cache("RITest")
+clear_cache('') #nter dataset name
