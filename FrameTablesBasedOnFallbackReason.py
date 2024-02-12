@@ -2,7 +2,7 @@ import sempy.fabric as fabric
 import numpy as np
 import pandas as pd
 
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
         datasetName,
         """
@@ -35,5 +35,5 @@ else:
         tables_string = ', '.join(table_names)
 
         # Refresh (frame) necessary tables
-        fabric.refresh_dataset(dataset = datasetName, refresh_type = "full", objects = my_objects)
+        fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = my_objects)
         print(f"The following tables have been framed: {tables_string}.")
