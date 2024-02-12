@@ -2,7 +2,7 @@ import sempy.fabric as fabric
 import numpy as np
 import pandas as pd
 
-datasetName = "" #Enter dataset name
+datasetName = '' #Enter dataset name
 x = fabric.evaluate_dax(
         datasetName,
         """
