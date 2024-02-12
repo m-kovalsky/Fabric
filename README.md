@@ -667,28 +667,32 @@ from sempy.fabric._cache import _get_or_create_workspace_client
 from sempy.fabric._client._connection_mode import ConnectionMode
 import Microsoft.AnalysisServices.Tabular as TOM
 
-workspaceName = '' #Enter workspace name
-datasetName = '' #Enter dataset name
-tom_server = _get_or_create_workspace_client(workspaceName).get_dataset_client(datasetName, ConnectionMode.XMLA)._get_connected_dataset_server(readonly=False)
+def create_measure(datasetName, tableName, measureName, measureExpression, workspaceName = None):
 
-tName = '' #Enter table name for your measure
-mName = '' #Enter measure name
-mExpr = '' #Enter DAX expression
-measure = TOM.Measure()
-measure.Name = mName
-measure.Expression = mExpr
-for d in tom_server.Databases:
-    if d.Name == datasetName:
-        print(f"Updating {d.Name}...")
-        m = d.Model
-        for t in m.Tables:
-            if t.Name == tName:
-                if not any(existing_measure.Name == mName for existing_measure in t.Measures):
-                    t.Measures.Add(measure)
-                    print(f"'{mName}' added to the '{tName}' table.")
-                else:
-                    print(f"'{mName}' already exists as a measure. No measure was added.")
-        m.SaveChanges()
+    if workspaceName == None:
+        workspaceID = fabric.get_workspace_id()
+        workspaceName = fabric.resolve_workspace_name(workspaceID)
+
+    tom_server = _get_or_create_workspace_client(workspaceName).get_dataset_client(datasetName, ConnectionMode.XMLA)._get_connected_dataset_server(readonly=False)
+
+    measure = TOM.Measure()
+    measure.Name = measureName
+    measure.Expression = measureExpression
+    
+    for d in tom_server.Databases:
+        if d.Name == datasetName:
+            print(f"Updating {d.Name}...")
+            m = d.Model
+            for t in m.Tables:
+                if t.Name == tableName:
+                    if not any(existing_measure.Name == measureName for existing_measure in t.Measures):
+                        t.Measures.Add(measure)
+                        print(f"'{measureName}' added to the '{tableName}' table.")
+                    else:
+                        print(f"'{measureName}' already exists as a measure. No measure was added.")
+            m.SaveChanges()
+
+create_measure(datasetName = '',tableName = '', measureName = '', measureExpression = '') # Enter dataset name, table name, measure name, measure expression (DAX)
 ```
 
 #### Update the DAX expression of an existing measure in a semantic model
