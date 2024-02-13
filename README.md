@@ -362,6 +362,24 @@ x = fabric.list_reports()
 x
 ```
 
+#### Rebind a list of reports to a single dataset
+* First run [this](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) code to create the report_rebind function.
+```python
+reportName = '' #Enter the report name
+datasetName = '' #Enter the dataset name
+for item in report_list:
+    report_rebind(reportName, datasetName)
+```
+
+#### Rebind a list of reports to a single dataset
+* First run [this](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) code to create the report_rebind function.
+```python
+report_list = ['', '', '', '', ''] #Enter your list of reports
+datasetName = '' #Enter the dataset name
+for item in report_list:
+    report_rebind(item, datasetName)
+```
+
 #### Visualize a Power BI Report within a Fabric notebook
 ```python
 import sempy
