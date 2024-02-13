@@ -362,7 +362,7 @@ x = fabric.list_reports()
 x
 ```
 
-#### Rebind a single report to a single dataset
+#### Rebind a report to a dataset
 * First run [this](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) code to create the report_rebind function.
 ```python
 reportName = '' #Enter the report name
