@@ -2,6 +2,9 @@ import sempy
 import sempy.fabric as fabric
 import json, requests, pandas as pd
 
+# reportName: this is the report you want to rebind the dataset
+# datasetName: this is the dataset to which you want to rebind the report
+
 def report_rebind(reportName, datasetName):
 
     client = fabric.PowerBIRestClient()
@@ -28,5 +31,3 @@ def report_rebind(reportName, datasetName):
         print(f"Report '{reportName}' has been successfully rebinded to the '{datasetName}' dataset.")
     else:
         print(f"POST request failed with status code: {response.status_code}")
-
-report_rebind('', '') # Enter report name you want to rebind, enter the dataset to which you want to rebind the report
