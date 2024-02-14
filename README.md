@@ -38,6 +38,7 @@ An even better way to ensure the Semantic-link library is available in your work
 import sempy
 import sempy.fabric as fabric
 import pandas as pd
+import numpy as np
 import pyspark
 import pyspark.sql.functions as F
 import pyarrow.dataset as ds
