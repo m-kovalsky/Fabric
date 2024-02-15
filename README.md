@@ -399,6 +399,46 @@ def launch_report(reportName):
 launch_report('') #Enter report name
 ```
 
+## Dashboards
+
+#### List dashboards in a given workspace
+```
+import sempy
+import sempy.fabric as fabric
+import json
+import pandas as pd
+
+def list_dashboards(workspaceName=None):
+
+    df = pd.DataFrame(columns=['Dashboard ID', 'Dashboard Name', 'Read Only', 'Web URL', 'Embed URL', 'Data Classification'])
+
+    if workspaceName == 'None':
+        groupId = fabric.get_workspace_id()
+    else:
+        groupId = fabric.resolve_workspace_id(workspaceName)
+
+    client = fabric.PowerBIRestClient()
+    response = client.get(f"/v1.0/myorg/groups/{groupId}/dashboards")
+    responseJson = response.json()
+
+    for v in responseJson['value']:
+        dashboardID = v['id']
+        displayName = v['displayName']
+        isReadOnly = v['isReadOnly']
+        webURL = v['webUrl']
+        embedURL = v['embedUrl']
+        dataClass = v['dataClassification']
+
+        new_data = {'Dashboard ID': dashboardID, 'Dashboard Name': displayName, 'Read Only': isReadOnly, 'Web URL': webURL, 'Embed URL': embedURL, 'Data Classification': dataClass}
+        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True) 
+
+    df['Read Only'] = df['Read Only'].astype(bool)
+
+    return df
+
+list_dashboards()
+```
+
 ## Dataset and dataset objects
 
 #### Shows a list of datasets in your current workspace
