@@ -402,7 +402,7 @@ launch_report('') #Enter report name
 ## Dashboards
 
 #### List dashboards in a given workspace
-```
+```python
 import sempy
 import sempy.fabric as fabric
 import json
