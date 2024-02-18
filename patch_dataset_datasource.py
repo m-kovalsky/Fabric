@@ -7,13 +7,17 @@ import pandas as pd
 
 def patch_dataset_datasource(datasetName):
 
+    aadFlag = 'False'
     dsInfo = get_dataset_datasource(datasetName)
     gatewayId = dsInfo['Gateway ID'].iloc[0]
     datasourceId = dsInfo['Datasource ID'].iloc[0]
 
     gDS = list_gateway_datasource(gatewayId)
-    gDS_filt = gDS[gDS['Data Source ID'] == dsId]
+    gDS_filt = gDS[gDS['Data Source ID'] == datasourceId]
     credType = gDS_filt['Credential Type'].iloc[0]
+
+    if credType == 'OAuth2':
+        aadFlag = 'True'
 
     client = fabric.PowerBIRestClient()
     request_body = {
@@ -22,7 +26,7 @@ def patch_dataset_datasource(datasetName):
         "encryptedConnection": "Encrypted",
         "encryptionAlgorithm": "None",
         "privacyLevel": "Organizational",
-        "useCallerAADIdentity": "True"
+        "useCallerAADIdentity": aadFlag
     }
     }
 
