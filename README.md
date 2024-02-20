@@ -985,3 +985,17 @@ def get_directlake_guardrails(skuSize):
 
 get_directlake_guardrails(sku_value)
 ```
+
+## Migrate Power Query logic to Dataflows Gen2
+
+Power Query logic can be migrated to Dataflows Gen2 by dynamically creating a [.pqt](https://learn.microsoft.com/power-query/power-query-template) file and then importing that .pqt file into Dataflows Gen2.
+
+1. Open your model in Tabular Editor
+2. Paste this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.cs) into the C# script window in Tabular Editor
+3. Update the folderPath parameter in line 29 to be the folder where the .pqt (Power Query Template) fill will be created
+4. Run the script
+5. Go to the Fabric service and create a new Dataflow Gen2 within your workspace
+6. Click on the link 'Import from a Power Query template'
+7. Select the PowerQueryTemplate.pqt file created in step 4
+8. Click 'Configure connection' to configure the connection to the data source
+9. Select a destination for each table (your desired lakehouse)
