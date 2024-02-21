@@ -992,11 +992,22 @@ Power Query logic can be migrated to Dataflows Gen2 by dynamically creating a [.
 
 Note: If your semantic model is using Incremental Refresh, you will have to remove that in order for this process to work.
 
+### Method 1: Fabric Notebook
+1. Open a notebook in Fabric and make sure that the [semantic-link library is installed](https://github.com/m-kovalsky/Fabric#load-semantic-link-into-a-custom-fabric-environment)
+2. Connect the notebook to your lakehouse
+3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.py) in the notebook, specifying the semantic model name in the last line of the script which calls the function
+4. Make sure that you have installed [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222)
+5. Create a new Dataflow Gen2 within your Fabric workspace
+6. Select the PowerQueryTemplate.pqt file created in step 3
+7. Click 'Configure connection' to configure the connection to the data source
+8. Select a destination for each table (your desired lakehouse)
+
+### Method 2: Tabular Editor
 1. Open your model in Tabular Editor
 2. Paste this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.cs) into the C# script window in Tabular Editor
 3. Update the folderPath parameter in line 29 to be the folder where the .pqt (Power Query Template) fill will be created
 4. Run the script
-5. Go to the Fabric service and create a new Dataflow Gen2 within your workspace
+5. Create a new Dataflow Gen2 within your Fabric workspace
 6. Click on the link 'Import from a Power Query template'
 7. Select the PowerQueryTemplate.pqt file created in step 4
 8. Click 'Configure connection' to configure the connection to the data source
