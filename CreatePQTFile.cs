@@ -38,11 +38,19 @@ string newline = Environment.NewLine;
 sb.Append("section Section1;");
 foreach (var t in Model.Tables)
 {
-    sb.Append(newline + "shared " + t.Name + " = ");
+    string tName = "#\"" + t.Name + "\"";
+    sb.Append(newline + "shared " + tName + " = ");
     foreach (var p in t.Partitions)
     {
         sb.Append(p.Query + ";");
     }
+}
+
+foreach (var e in Model.Expressions)
+{
+    string expr = e.Expression;
+    string eName = "#\"" + e.Name + "\"";
+    sb.Append(newline + "shared " + eName + " = " + expr + ";");
 }
 
 File.WriteAllText(mdfilePath, sb.ToString());
@@ -58,6 +66,18 @@ foreach (var t in Model.Tables)
 {
     string tName = t.Name;
     queryMetadata.Add( new QueryMetadata {QueryName = tName, QueryGroupId = null, LastKnownIsParameter = null, LastKnownResultTypeName = null, LoadEnabled = true, IsHidden = false});
+}
+foreach (var e in Model.Expressions)
+{
+    string eName = e.Name;
+    if (e.Kind.ToString() == "M")
+    {
+        queryMetadata.Add( new QueryMetadata {QueryName = eName, QueryGroupId = null, LastKnownIsParameter = null, LastKnownResultTypeName = null, LoadEnabled = true, IsHidden = false});
+    }
+    else
+    {
+        queryMetadata.Add( new QueryMetadata {QueryName = eName, QueryGroupId = null, LastKnownIsParameter = null, LastKnownResultTypeName = null, LoadEnabled = false, IsHidden = false});
+    }
 }
 
 // Create a single Root object
