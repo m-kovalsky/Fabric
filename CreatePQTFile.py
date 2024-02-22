@@ -15,6 +15,7 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
 
     dfP = fabric.list_partitions(datasetName)
     dfT = fabric.list_tables(datasetName)
+    dfE = fabric.list_expressions(datasetName)
 
     # Check if M-partitions are used
     if any(dfP['Source Type'] == 'M'):
@@ -41,13 +42,29 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
         mdFilePath = os.path.join(subFolderPath, mdfileName)
         sb = 'section Section1;'
         for table_name in dfP['Table Name'].unique():
-            sb = sb + '\n' + 'shared ' + table_name + ' = '
+            tName = '#\"' + table_name + '"'
+            sb = sb + '\n' + 'shared ' + tName + ' = '
+            #sourceExpression = dfP.loc[(dfP['Table Name'] == table_name), 'Source Expression'].iloc[0]
+            #refreshPolicy = dfP.loc[(dfP['Table Name'] == table_name), 'Refresh Policy'].iloc[0]
+
+            #if refreshPolicy == True:
+                #sb = sb + sourceExpression + ';'
 
             partitions_in_table = dfP.loc[dfP['Table Name'] == table_name, 'Partition Name'].unique()
 
+            i=1
             for partition_name in partitions_in_table:
+                pSourceType = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Source Type'].iloc[0]
+                #if refreshPolicy == False and pSourceType == 'M' and i==1:
                 pQuery = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Query'].iloc[0]
                 sb = sb + pQuery + ';'
+                i+=1
+
+        for index, row in dfE.iterrows():
+            expr = row['Expression']
+            eName = row['Name']
+            eName = '#"' + eName + '"'
+            sb = sb + '\n' + "shared " + eName + " = " + expr + ";"
 
         with open(mdFilePath, 'w') as file:
             file.write(sb)
@@ -55,8 +72,20 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
         # STEP 2: Create the MashupMetadata.json file
         mmfileName = 'MashupMetadata.json'
         mmFilePath = os.path.join(subFolderPath, mmfileName)
+        queryMetadata = []
 
-        queryMetadata = [QueryMetadata(row['Name']) for index, row in dfT.iterrows()]
+        for i, r in dfT.iterrows():
+            tName = r['Name']
+            queryMetadata.append(QueryMetadata(tName, None, None, None, True, False))
+
+        for i, r in dfE.iterrows():
+            eName = r['Name']
+            eKind = r['Kind']
+            if eKind == 'M':
+                queryMetadata.append(QueryMetadata(eName, None, None, None, True, False))
+            else:
+                queryMetadata.append(QueryMetadata(eName, None, None, None, False, False))
+
         rootObject = RootObject("en-US", "2.126.453.0", queryMetadata)
 
         def obj_to_dict(obj):
@@ -111,4 +140,4 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
     else:
         print(f"The '{datasetName}' semantic model does not use Power Query so a Power Query Template file cannot be generated.")
 
-create_pqt_file('') #Enter semantic model name
+create_pqt_file('PBITemplateTest') #Enter semantic model name
