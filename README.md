@@ -995,7 +995,7 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 *Note: Currently on the Tabular Editor method supports semantic models using Incremental Refresh. This is coming soon to the Fabric Notebook script.*
 *Note: For multi-partitioned tables, this process will take just the first partition from the table. In the case of Incremental Refresh, it will take the Source Expression (M query) from the table and ignore the individual partitions.*
 
-### Method 1: Fabric Notebook
+### Method 1: [Fabric Notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook)
 1. Open a notebook in Fabric and make sure that the [semantic-link library is installed](https://github.com/m-kovalsky/Fabric#load-semantic-link-into-a-custom-fabric-environment)
 2. Connect the notebook to your lakehouse
 3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.py) in the notebook, specifying the semantic model name in the last line of the script which calls the function
@@ -1006,8 +1006,8 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 8. Select a destination for each table (your desired lakehouse)
 9. Click 'Publish'
 
-### Method 2: Tabular Editor
-1. Open your model in Tabular Editor
+### Method 2: [Tabular Editor](https://tabulareditor.com/)
+1. Open your model in Tabular Editor (version 2 or 3)
 2. Paste this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.cs) into the C# script window in Tabular Editor
 3. Update the folderPath parameter in line 29 to be the folder where the .pqt (Power Query Template) fill will be created
 4. Run the script
