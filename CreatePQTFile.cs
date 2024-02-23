@@ -40,9 +40,15 @@ foreach (var t in Model.Tables)
 {
     string tName = "#\"" + t.Name + "\"";
     sb.Append(newline + "shared " + tName + " = ");
-    foreach (var p in t.Partitions)
+
+    if (t.EnableRefreshPolicy)
     {
-        sb.Append(p.Query + ";");
+        sb.Append(t.SourceExpression + ";");
+    }
+    else
+    {
+        string pQuery = t.Partitions[0].Query;
+        sb.Append(pQuery + ";");
     }
 }
 
