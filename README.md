@@ -988,11 +988,11 @@ get_directlake_guardrails(sku_value)
 
 ## Migrate Power Query logic to Dataflows Gen2
 
-Power Query logic can be migrated to Dataflows Gen2 by using a [Power Query Template](https://learn.microsoft.com/power-query/power-query-template) file and then importing that .pqt file into Dataflows Gen2. This will migrate all of your tables to Dataflows Gen2 in one swoop.
+Power Query logic can be migrated to Dataflows Gen2 by using a [Power Query Template](https://learn.microsoft.com/power-query/power-query-template) file and then importing that file into Dataflows Gen2. This will migrate all of your tables to Dataflows Gen2 in one swoop.
 
 The following process dynamically creates the Power Query Template (.pqt) file so you can import it into Dataflows Gen2 to create delta tables in your Fabric lakehouse.
 
-Note: Currently on the Tabular Editor method supports semantic models using Incremental Refresh. This is coming soon to the Fabric Notebook script.
+*Note: Currently on the Tabular Editor method supports semantic models using Incremental Refresh. This is coming soon to the Fabric Notebook script.*
 
 ### Method 1: Fabric Notebook
 1. Open a notebook in Fabric and make sure that the [semantic-link library is installed](https://github.com/m-kovalsky/Fabric#load-semantic-link-into-a-custom-fabric-environment)
