@@ -993,6 +993,7 @@ Power Query logic can be migrated to Dataflows Gen2 by using a [Power Query Temp
 The following process dynamically creates the Power Query Template (.pqt) file so you can import it into Dataflows Gen2 to create delta tables in your Fabric lakehouse.
 
 *Note: Currently on the Tabular Editor method supports semantic models using Incremental Refresh. This is coming soon to the Fabric Notebook script.*
+*Note: For multi-partitioned tables, this process will take just the first partition from the table. In the case of Incremental Refresh, it will take the Source Expression (M query) from the table and ignore the individual partitions.*
 
 ### Method 1: Fabric Notebook
 1. Open a notebook in Fabric and make sure that the [semantic-link library is installed](https://github.com/m-kovalsky/Fabric#load-semantic-link-into-a-custom-fabric-environment)
