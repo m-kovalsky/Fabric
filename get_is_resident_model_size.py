@@ -116,4 +116,4 @@ def get_is_resident_model_size(datasetName, workspaceName = None):
     return total_size_sum
     
 
-get_is_resident_model_size('AdvWorks')
+get_is_resident_model_size('') #Enter semantic model name
