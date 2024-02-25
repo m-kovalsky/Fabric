@@ -5,6 +5,9 @@ import json
 import os
 import xml.etree.ElementTree as ET
 import shutil
+from sempy.fabric._client import DatasetXmlaClient
+from sempy.fabric._cache import _get_or_create_workspace_client
+sempy.fabric._client._utils._init_analysis_services()
 
 def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
 
@@ -13,8 +16,33 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
     subFolderPath = os.path.join(folderPath, 'pqtnewfolder')
     os.makedirs(subFolderPath, exist_ok=True)
 
+    def list_tables(datasetName, workspaceName = None):
+
+        if workspaceName == None:
+            workspaceId = fabric.get_workspace_id()
+            workspaceName = fabric.resolve_workspace_name(workspaceId)
+
+        workspace_client = _get_or_create_workspace_client(workspaceName)
+        ds = workspace_client.get_dataset(datasetName)
+        m = ds.Model
+
+        header = pd.DataFrame(columns=['Name', 'Refresh Policy', 'Source Expression'])
+        df = pd.DataFrame(header)
+
+        for t in m.Tables:
+            rPolicy = bool(t.RefreshPolicy)
+            sourceExpression = None
+
+            if rPolicy:
+                sourceExpression = t.RefreshPolicy.SourceExpression
+
+            new_data = {'Name': t.Name, 'Refresh Policy': rPolicy, 'Source Expression': sourceExpression}
+            df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+
+        return df
+
     dfP = fabric.list_partitions(datasetName)
-    dfT = fabric.list_tables(datasetName)
+    dfT = list_tables(datasetName)
     dfE = fabric.list_expressions(datasetName)
 
     # Check if M-partitions are used
@@ -44,20 +72,20 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
         for table_name in dfP['Table Name'].unique():
             tName = '#\"' + table_name + '"'
             sb = sb + '\n' + 'shared ' + tName + ' = '
-            #sourceExpression = dfP.loc[(dfP['Table Name'] == table_name), 'Source Expression'].iloc[0]
-            #refreshPolicy = dfP.loc[(dfP['Table Name'] == table_name), 'Refresh Policy'].iloc[0]
+            sourceExpression = dfT.loc[(dfT['Name'] == table_name), 'Source Expression'].iloc[0]
+            refreshPolicy = dfT.loc[(dfT['Name'] == table_name), 'Refresh Policy'].iloc[0]
 
-            #if refreshPolicy == True:
-                #sb = sb + sourceExpression + ';'
+            if refreshPolicy == True:
+                sb = sb + sourceExpression + ';'
 
             partitions_in_table = dfP.loc[dfP['Table Name'] == table_name, 'Partition Name'].unique()
 
             i=1
             for partition_name in partitions_in_table:
                 pSourceType = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Source Type'].iloc[0]
-                #if refreshPolicy == False and pSourceType == 'M' and i==1:
-                pQuery = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Query'].iloc[0]
-                sb = sb + pQuery + ';'
+                if refreshPolicy == False and pSourceType == 'M' and i==1:
+                    pQuery = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Query'].iloc[0]
+                    sb = sb + pQuery + ';'
                 i+=1
 
         for index, row in dfE.iterrows():
@@ -140,4 +168,4 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
     else:
         print(f"The '{datasetName}' semantic model does not use Power Query so a Power Query Template file cannot be generated.")
 
-create_pqt_file('PBITemplateTest') #Enter semantic model name
+create_pqt_file('IncrementalRefreshTest') #Enter semantic model name
