@@ -1032,7 +1032,7 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.py) in the notebook, specifying the semantic model name in the last line of the script which calls the function
 4. Make sure that you have installed [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222)
 5. Create a new Dataflow Gen2 within your Fabric workspace
-6. Select the PowerQueryTemplate.pqt file created in step 3
+6. Select the PowerQueryTemplate.pqt file created in step 3 (*note: you may have to right click on the folder in the Windows file explorer and select 'OneLake -> Sync from OneLake'*)
 7. Click 'Configure connection' to configure the connection to the data source
 8. Select a destination for each table (your desired lakehouse)
 9. Click 'Publish'
