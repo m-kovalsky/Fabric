@@ -991,7 +991,11 @@ import sempy
 import sempy.fabric as fabric
 import pandas as pd
 
-def get_sku_size(workspaceName):
+def get_sku_size(workspaceName = None):
+
+    if workspaceName == None:
+        workspaceId = fabric.get_workspace_id()
+        workspaceName = fabric.resolve_workspace_name(workspaceId)
 
     dfC = fabric.list_capacities()
     dfW = fabric.list_workspaces().sort_values(by='Name', ascending=True)
@@ -1002,7 +1006,7 @@ def get_sku_size(workspaceName):
     
     return sku_value
 
-sku_value = get_sku_size('') #Enter workspace name
+sku_value = get_sku_size()
 
 def get_directlake_guardrails(skuSize):
     url = 'https://learn.microsoft.com/power-bi/enterprise/directlake-overview'
