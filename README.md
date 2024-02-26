@@ -627,6 +627,38 @@ x = fabric.list_expressions(datasetName)
 x
 ```
 
+#### Create a new blank semantic model
+```python
+import sempy
+import sempy.fabric as fabric
+
+def create_blank_semantic_model(datasetName, compatibilityLevel = 1604, workspaceName = None):
+
+  if workspaceName == None:
+    workspaceId = fabric.get_workspace_id()
+    workspaceName = fabric.resolve_workspace_name(workspaceId)
+
+  tmsl = f'''
+  {{
+    "createOrReplace": {{
+      "object": {{
+        "database": '{datasetName}'
+      }},
+      "database": {{
+        "name": '{datasetName}',
+        "compatibilityLevel": {compatibilityLevel},
+        "model": {{
+          "culture": "en-US",
+          "defaultPowerBIDataSourceVersion": "powerBI_V3"
+        }}
+      }}
+    }}
+  }}
+  '''
+
+  return fabric.execute_tmsl(script = tmsl, workspace = workspaceName)
+```
+
 ## Dataset Refresh
 
 Valid options for refresh_type: 'full', 'automatic', 'dataOnly', 'calculate', 'clearValues', 'defragment'. Default is 'automatic'.
