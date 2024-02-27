@@ -11,11 +11,41 @@ import System
 
 datasetName = '' # Original semantic model name
 newDatasetName = '' # New semantic model name
-dfC = fabric.list_columns(datasetName)
-dfT = fabric.list_tables(datasetName)
 workspaceId = fabric.get_workspace_id()
 workspaceName = fabric.resolve_workspace_name(workspaceId)
 tom_server = _get_or_create_workspace_client(workspaceName).get_dataset_client(newDatasetName, ConnectionMode.XMLA)._get_connected_dataset_server(readonly=False)
+
+def list_tables(datasetName, workspaceName = None):
+
+    if workspaceName == None:
+        workspaceId = fabric.get_workspace_id()
+        workspaceName = fabric.resolve_workspace_name(workspaceId)
+
+    workspace_client = _get_or_create_workspace_client(workspaceName)
+    ds = workspace_client.get_dataset(datasetName)
+    m = ds.Model
+
+    header = pd.DataFrame(columns=['Name', 'Type', 'Hidden', 'Data Category', 'Description', 'Refresh Policy', 'Source Expression'])
+    df = pd.DataFrame(header)
+
+    for t in m.Tables:
+        tableType = "Table"
+        rPolicy = bool(t.RefreshPolicy)
+        sourceExpression = None
+        if str(t.CalculationGroup) != "None":
+            tableType = "Calculation Group"
+        else:
+            for p in t.Partitions:
+                if str(p.SourceType) == "Calculated":
+                    tableType = "Calculated Table"
+
+        if rPolicy:
+            sourceExpression = t.RefreshPolicy.SourceExpression
+
+        new_data = {'Name': t.Name, 'Type': tableType,'Hidden': t.IsHidden, 'Data Category': t.DataCategory, 'Description': t.Description, 'Refresh Policy': rPolicy, 'Source Expression': sourceExpression}
+        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+
+    return df
 
 def get_shared_expression(lakehouseName = None, workspaceName = None):
 
@@ -53,6 +83,9 @@ def get_shared_expression(lakehouseName = None, workspaceName = None):
     return x
 
 shEx = get_shared_expression()
+
+dfC = fabric.list_columns(datasetName)
+dfT = list_tables(datasetName)
 
 for d in tom_server.Databases:
     if d.Name == newDatasetName:
