@@ -1064,7 +1064,7 @@ The following process automates the migration of an import/DirectQuery model to 
 2. Run this [script](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#create-a-new-blank-semantic-model) in a Fabric Notebook to create a new blank semantic model
 3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/AddTablesColumnsToNewModel.py) in a Fabric notebook to create the tables and columns in the new semantic model
 4. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/MigrateObjectsToNewModel.py) in a Fabric notebook to migrate relavent objects to the new semantic model (table properties, column properties, hierarchies, measures, relationships, roles, row level security, calculation groups and calculation items, perspectives, and translations
-5. Refresh the new semantic model (click the refresh icon next to the semantic model within the Workspace view).
+5. Refresh the new semantic model (click the refresh icon next to the semantic model within the Workspace view)
 6. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) in a Fabric notebook to rebind reports to the new semantic model
 
 ### Completing these steps will do the following:
