@@ -71,11 +71,14 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
         sb = 'section Section1;'
         for table_name in dfP['Table Name'].unique():
             tName = '#\"' + table_name + '"'
-            sb = sb + '\n' + 'shared ' + tName + ' = '
             sourceExpression = dfT.loc[(dfT['Name'] == table_name), 'Source Expression'].iloc[0]
             refreshPolicy = dfT.loc[(dfT['Name'] == table_name), 'Refresh Policy'].iloc[0]
+            sourceType = dfP.loc[(dfP['Table Name'] == table_name), 'Source Type'].iloc[0]
 
-            if refreshPolicy == True:
+            if sourceType == 'M':
+                sb = sb + '\n' + 'shared ' + tName + ' = '
+
+            if refreshPolicy == True and sourceType == 'M':
                 sb = sb + sourceExpression + ';'
 
             partitions_in_table = dfP.loc[dfP['Table Name'] == table_name, 'Partition Name'].unique()
@@ -102,9 +105,10 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
         mmFilePath = os.path.join(subFolderPath, mmfileName)
         queryMetadata = []
 
-        for i, r in dfT.iterrows():
-            tName = r['Name']
-            queryMetadata.append(QueryMetadata(tName, None, None, None, True, False))
+        for tName in dfP['Table Name'].unique():
+            sourceType = dfP.loc[(dfP['Table Name'] == tName), 'Source Type'].iloc[0]
+            if sourceType == 'M':
+                queryMetadata.append(QueryMetadata(tName, None, None, None, True, False))
 
         for i, r in dfE.iterrows():
             eName = r['Name']
@@ -168,4 +172,4 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
     else:
         print(f"The '{datasetName}' semantic model does not use Power Query so a Power Query Template file cannot be generated.")
 
-create_pqt_file('IncrementalRefreshTest') #Enter semantic model name
+create_pqt_file('') #Enter semantic model name
