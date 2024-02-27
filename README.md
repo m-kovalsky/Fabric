@@ -1052,3 +1052,19 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 8. Click 'Configure connection' to configure the connection to the data source
 9. Select a destination for each table (your desired lakehouse)
 10. Click 'Publish'
+ 
+## Direct Lake migration
+
+The following process automates the migration of an import/DirectQuery model to a new Direct Lake model. The first step is specifically applicable to models which use Power Query to perform data transformations. If your model does not use Power Query, you must migrate the base tables used in your semantic model to a Fabric lakehouse.
+
+1. Migrate Power Query logic to Dataflows Gen2 using this [process](https://github.com/m-kovalsky/Fabric#migrate-power-query-logic-to-dataflows-gen2)
+2. Run this [script](https://github.com/m-kovalsky/Fabric#create-a-new-blank-semantic-model) in a Fabric Notebook to create a new blank semantic model
+3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/MigrateObjectsToNewModel.py) in a Fabric notebook to migrate relavent objects to the new semantic model (table properties, column properties, hierarchies, measures, relationships, roles, row level security, calculation groups and calculation items, perspectives, and translations
+4. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) in a Fabric notebook to rebind reports to the new semantic model
+
+### Completing these steps will do the following:
+* Offload your Power Query logic to Dataflows Gen2 inside of Fabric (where it can be maintained and development can continue).
+* Dataflows Gen2 will create delta tables in your Fabric lakehouse. These tables can then be used for your Direct Lake model.
+* Create a new semantic model in Direct Lake mode containing all the standard tables and columns, calculation groups, measures, relationships, hierarchies, roles, row level security, perspectives, and translations from your original semantic model.
+* Non-supported objects are not transferred (i.e. calculated columns, calculated tables, relationships using columns with unsupported data types etc.).
+* Reports used by your original semantic model will be rebinded to your new semantic model.
