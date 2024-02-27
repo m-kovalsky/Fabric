@@ -147,5 +147,5 @@ for d in tom_server.Databases:
                 m.Tables.Add(tbl)
                 print(f"The '{tName}' table has been added.")
 
-        #m.SaveChanges()
+        m.SaveChanges()
         print(f"\nAll regular tables and columns have been added to the model.")
