@@ -15,6 +15,38 @@ import System
 datasetName = '' #Enter the old semantic model name
 newDatasetName = '' #Enter the new semantic model name
 
+def list_tables(datasetName, workspaceName = None):
+
+    if workspaceName == None:
+        workspaceId = fabric.get_workspace_id()
+        workspaceName = fabric.resolve_workspace_name(workspaceId)
+
+    workspace_client = _get_or_create_workspace_client(workspaceName)
+    ds = workspace_client.get_dataset(datasetName)
+    m = ds.Model
+
+    header = pd.DataFrame(columns=['Name', 'Type', 'Hidden', 'Data Category', 'Description', 'Refresh Policy', 'Source Expression'])
+    df = pd.DataFrame(header)
+
+    for t in m.Tables:
+        tableType = "Table"
+        rPolicy = bool(t.RefreshPolicy)
+        sourceExpression = None
+        if str(t.CalculationGroup) != "None":
+            tableType = "Calculation Group"
+        else:
+            for p in t.Partitions:
+                if str(p.SourceType) == "Calculated":
+                    tableType = "Calculated Table"
+
+        if rPolicy:
+            sourceExpression = t.RefreshPolicy.SourceExpression
+
+        new_data = {'Name': t.Name, 'Type': tableType,'Hidden': t.IsHidden, 'Data Category': t.DataCategory, 'Description': t.Description, 'Refresh Policy': rPolicy, 'Source Expression': sourceExpression}
+        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
+
+    return df
+
 def list_translations(datasetName, workspaceName = None):
 
     if workspaceName == None:
@@ -111,7 +143,7 @@ workspaceName = fabric.resolve_workspace_name(workspaceId)
 
 tom_server = _get_or_create_workspace_client(workspaceName).get_dataset_client(newDatasetName, ConnectionMode.XMLA)._get_connected_dataset_server(readonly=False)
 
-dfT = fabric.list_tables(datasetName)
+dfT = list_tables(datasetName)
 dfC = fabric.list_columns(datasetName)
 dfM = fabric.list_measures(datasetName)
 dfR = fabric.list_relationships(datasetName)
@@ -269,16 +301,6 @@ for d in tom_server.Databases:
             elif mult[-1] == '0':
                 toCardinality = System.Enum.Parse(TOM.RelationshipEndCardinality, "None")
 
-            rel = TOM.SingleColumnRelationship()
-            rel.FromColumn = m.Tables[fromTable].Columns[fromColumn]
-            rel.FromCardinality = fromCardinality
-            rel.ToColumn = m.Tables[toTable].Columns[toColumn]
-            rel.ToCardinality = toCardinality
-            rel.IsActive = isActive
-            rel.CrossFilteringBehavior = crossFB
-            rel.SecurityFilteringBehavior = secFB
-            rel.RelyOnReferentialIntegrity = rori
-
             if any(r.FromTable.Name == fromTable and r.FromColumn.Name == fromColumn and r.ToTable.Name == toTable and r.ToColumn.Name == toColumn for r in m.Relationships):
                 print(f"WARNING: '{fromTable}'[{fromColumn}] -> '{toTable}'[{toColumn}] already exists as a relationship in the semantic model.")
             elif isDirectLake and any(r.FromTable.Name == fromTable and r.FromColumn.Name == fromColumn and r.ToTable.Name == toTable and r.ToColumn.Name == toColumn and (r.FromColumn.DataType == 'DateTime' or r.ToColumn.DataType == 'DateTime') for r in m.Relationships):
@@ -287,6 +309,15 @@ for d in tom_server.Databases:
                 print(f"ERROR: '{fromTable}'[{fromColumn}] -> '{toTable}'[{toColumn}] was not created since columns used in a relationship must have the same data type.")
             else:
                 try:
+                    rel = TOM.SingleColumnRelationship()
+                    rel.FromColumn = m.Tables[fromTable].Columns[fromColumn]
+                    rel.FromCardinality = fromCardinality
+                    rel.ToColumn = m.Tables[toTable].Columns[toColumn]
+                    rel.ToCardinality = toCardinality
+                    rel.IsActive = isActive
+                    rel.CrossFilteringBehavior = crossFB
+                    rel.SecurityFilteringBehavior = secFB
+                    rel.RelyOnReferentialIntegrity = rori
                     m.Relationships.Add(rel)
                     print(f"'{fromTable}'[{fromColumn}] -> '{toTable}'[{toColumn}] relationship has been added.")
                 except:
@@ -353,46 +384,53 @@ for d in tom_server.Databases:
             tName = row['Table Name']
             oName = row['Object Name']
             oType = row['Object Type']
+            tType = dfT.loc[(dfT['Name'] == tName), 'Type'].iloc[0]
 
             perspTbl, perspCol, perspMeas, perspHier = TOM.PerspectiveTable(), TOM.PerspectiveColumn(), TOM.PerspectiveMeasure(), TOM.PerspectiveHierarchy()
 
-            perspTbl.Table = m.Tables[tName]
-            try:
-                m.Perspectives[pName].PerspectiveTables.Add(perspTbl)
-                print(f"'The {tName}' table has been added to the '{pName}' perspective.")
-            except:
-                pass
+            if tType == 'Table':
+                try:
+                    perspTbl.Table = m.Tables[tName]
+                except:
+                    print(f"The '{tName}' was not added to the '{pName}' perspective.")
+                try:
+                    m.Perspectives[pName].PerspectiveTables.Add(perspTbl)
+                    print(f"'The '{tName}' table has been added to the '{pName}' perspective.")
+                except:
+                    pass
 
-            if oType == 'Column':
-                try:
-                    perspCol.Column = m.Tables[tName].Columns[oName]
-                except:
-                    print(f"WARNING: The {tName}'[{oName}] {oType.lower()} does not exist in the model. As such, it was not added to the '{pName}' perspective.")
-                try:
-                    m.Perspectives[pName].PerspectiveTables[tName].PerspectiveColumns.Add(perspCol)
-                    print(f"'The {tName}'[{oName}] {oType.lower()} has been added to the '{pName}' perspective.")
-                except:
-                    print(f"WARNING The {tName}'[{oName}] {oType.lower()} was not added to the '{pName}' perspective.")
-            elif oType == 'Measure':
-                try:
-                    perspMeas.Measure = m.Tables[tName].Measures[oName]
-                except:
-                    print(f"WARNING: The {tName}'[{oName}] {oType.lower()} does not exist in the model. As such, it was not added to the '{pName}' perspective.")
-                try:
-                    m.Perspectives[pName].PerspectiveTables[tName].PerspectiveMeasures.Add(perspMeas)
-                    print(f"'The {tName}'[{oName}] {oType.lower()} has been added to the '{pName}' perspective.")
-                except:
-                    print(f"WARNING: The {tName}'[{oName}] {oType.lower()} was not added to the '{pName}' perspective.")
-            elif oType == 'Hierarchy':
-                try:            
-                    perspHier.Hierarchy = m.Tables[tName].Hierarchies[oName]
-                except:
-                    print(f"WARNING: The {tName}'[{oName}] {oType.lower()} does not exist in the model. As such, it was not added to the '{pName}' perspective.")
-                try:
-                    m.Perspectives[pName].PerspectiveTables[tName].PerspectiveHierarchies.Add(perspHier)
-                    print(f"'The {tName}'[{oName}] {oType.lower()} has been added to the '{pName}' perspective.")
-                except:
-                    print(f"WARNING: The {tName}'[{oName}] {oType.lower()} was not added to the '{pName}' perspective.")
+                if oType == 'Column':
+                    colType = dfC.loc[(dfC['Table Name'] == tName) &  (dfC['Column Name'] == oName), 'Type'].iloc[0]
+                    if colType == 'Data':
+                        try:
+                            perspCol.Column = m.Tables[tName].Columns[oName]
+                        except:
+                            print(f"WARNING: The {tName}'[{oName}] {oType.lower()} does not exist in the model. As such, it was not added to the '{pName}' perspective.")
+                        try:
+                            m.Perspectives[pName].PerspectiveTables[tName].PerspectiveColumns.Add(perspCol)
+                            print(f"'The {tName}'[{oName}] {oType.lower()} has been added to the '{pName}' perspective.")
+                        except:
+                            print(f"WARNING The {tName}'[{oName}] {oType.lower()} was not added to the '{pName}' perspective.")
+                elif oType == 'Measure':
+                    try:
+                        perspMeas.Measure = m.Tables[tName].Measures[oName]
+                    except:
+                        print(f"WARNING: The {tName}'[{oName}] {oType.lower()} does not exist in the model. As such, it was not added to the '{pName}' perspective.")
+                    try:
+                        m.Perspectives[pName].PerspectiveTables[tName].PerspectiveMeasures.Add(perspMeas)
+                        print(f"'The {tName}'[{oName}] {oType.lower()} has been added to the '{pName}' perspective.")
+                    except:
+                        print(f"WARNING: The {tName}'[{oName}] {oType.lower()} was not added to the '{pName}' perspective.")
+                elif oType == 'Hierarchy':
+                    try:            
+                        perspHier.Hierarchy = m.Tables[tName].Hierarchies[oName]
+                    except:
+                        print(f"WARNING: The {tName}'[{oName}] {oType.lower()} does not exist in the model. As such, it was not added to the '{pName}' perspective.")
+                    try:
+                        m.Perspectives[pName].PerspectiveTables[tName].PerspectiveHierarchies.Add(perspHier)
+                        print(f"'The {tName}'[{oName}] {oType.lower()} has been added to the '{pName}' perspective.")
+                    except:
+                        print(f"WARNING: The {tName}'[{oName}] {oType.lower()} was not added to the '{pName}' perspective.")
         
         for cgName in dfCI['Calculation Group Name'].unique():
             cgExists = any(t.Name == cgName for t in m.Tables if t.CalculationGroup is not None)
@@ -434,6 +472,7 @@ for d in tom_server.Databases:
                     if colType == 'Data':  
                         tbl.Columns.Add(col)
                         print(f"The '{colName}' column in the '{cgName}' calculation group table has been added.")
+                        m.DiscourageImplicitMeasures = True
 
                 calcItems = dfCI.loc[dfCI['Calculation Group Name'] == cgName, 'Calculation Item Name'].unique()
 
@@ -498,43 +537,42 @@ for d in tom_server.Databases:
                     objTrans.Property = property_mapping[prop]
 
             if oType == 'Table':
-                objTrans.Object = m.Tables[tName]        
+                try:
+                    objTrans.Object = m.Tables[tName]
+                except:
+                    pass
 
                 try:
                     m.Cultures[trName].ObjectTranslations.Add(objTrans)
                     print(f"'A translation for the '{prop}' in the '{trName}' language for the '{tName}' {oType.lower()} has been added.")
                 except:
                     pass
-            elif oType == 'Column':
-                objTrans.Object = m.Tables[tName].Columns[oName]
-
+            elif oType == 'Column':                
                 try:
+                    objTrans.Object = m.Tables[tName].Columns[oName]
                     m.Cultures[trName].ObjectTranslations.Add(objTrans)
                     print(f"'A translation for the '{prop}' in the '{trName}' language for the '{tName}'[{oName}] {oType.lower()} has been added.")
                 except:
                     pass
             elif oType == 'Measure':
-                objTrans.Object = m.Tables[tName].Measures[oName]
-
                 try:
+                    objTrans.Object = m.Tables[tName].Measures[oName]
                     m.Cultures[trName].ObjectTranslations.Add(objTrans)
                     print(f"'A translation for the '{prop}' in the '{trName}' language for the '{tName}'[{oName}] {oType.lower()} has been added.")
                 except:
                     pass
             elif oType == 'Hierarchy':
-                objTrans.Object = m.Tables[tName].Hierarchies[oName]
-
                 try:
+                    objTrans.Object = m.Tables[tName].Hierarchies[oName]
                     m.Cultures[trName].ObjectTranslations.Add(objTrans)
                     print(f"'A translation for the '{prop}' in the '{trName}' language for the '{tName}'[{oName}] {oType.lower()} has been added.")
                 except:
                     pass
             elif oType == 'Level':
-                hierName = oName.split("'[")[0][1:]
-                levelName = oName.split("'[")[1][0:-1]
-                objTrans.Object = m.Tables[tName].Hierarchies[hierName].Levels[levelName]
-
                 try:
+                    hierName = oName.split("'[")[0][1:]
+                    levelName = oName.split("'[")[1][0:-1]
+                    objTrans.Object = m.Tables[tName].Hierarchies[hierName].Levels[levelName]
                     m.Cultures[trName].ObjectTranslations.Add(objTrans)
                     print(f"'A translation for the '{prop}' in the '{trName}' language for the '{tName}'[{hierName}].[{levelName}] {oType.lower()} has been added.")
                 except:
