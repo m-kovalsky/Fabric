@@ -1058,7 +1058,7 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 The following process automates the migration of an import/DirectQuery model to a new Direct Lake model. The first step is specifically applicable to models which use Power Query to perform data transformations. If your model does not use Power Query, you must migrate the base tables used in your semantic model to a Fabric lakehouse.
 
 1. Migrate Power Query logic to Dataflows Gen2 using this [process](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#migrate-power-query-logic-to-dataflows-gen2)
-2. Run this [script](https://github.com/m-kovalsky/Fabric#create-a-new-blank-semantic-model) in a Fabric Notebook to create a new blank semantic model
+2. Run this [script](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#create-a-new-blank-semantic-model) in a Fabric Notebook to create a new blank semantic model
 3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/MigrateObjectsToNewModel.py) in a Fabric notebook to migrate relavent objects to the new semantic model (table properties, column properties, hierarchies, measures, relationships, roles, row level security, calculation groups and calculation items, perspectives, and translations
 4. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) in a Fabric notebook to rebind reports to the new semantic model
 
