@@ -1018,7 +1018,6 @@ def get_sku_size(workspaceName = None):
     dfC = fabric.list_capacities()
     dfW = fabric.list_workspaces().sort_values(by='Name', ascending=True)
     dfC.rename(columns={'Id': 'Capacity Id'}, inplace=True)
-    dfC['Capacity Id'] = dfC['Capacity Id'].str.upper()
     dfCW = pd.merge(dfW, dfC[['Capacity Id', 'Sku', 'Region', 'State']], on='Capacity Id', how='inner')
     sku_value = dfCW.loc[dfCW['Name'] == workspaceName, 'Sku'].iloc[0]
     
