@@ -1136,6 +1136,7 @@ The following process automates the migration of an import/DirectQuery model to 
 * Make sure you [enable XMLA Read/Write](https://learn.microsoft.com/power-bi/enterprise/service-premium-connect-tools#enable-xmla-read-write) for your capacity
 * Make sure you have a [lakehouse](https://learn.microsoft.com/fabric/onelake/create-lakehouse-onelake#create-a-lakehouse) in a Fabric workspace
 * Make sure you have a [Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook#create-notebooks) with [semantic-link installed](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#load-semantic-link-into-a-custom-fabric-environment)
+* [Install semantic-link](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#load-semantic-link-into-a-custom-fabric-environment) version 0.6.0 or higher in your notebook/environment
 * [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
 * Enable the following [setting](https://learn.microsoft.com/power-bi/transform-model/service-edit-data-models#enable-the-preview-feature): Workspace -> Workspace Settings -> General -> Data model settings -> Users can edit data models in the Power BI service
 
