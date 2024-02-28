@@ -47,97 +47,6 @@ def list_tables(datasetName, workspaceName = None):
 
     return df
 
-def list_translations(datasetName, workspaceName = None):
-
-    if workspaceName == None:
-        workspaceId = fabric.get_workspace_id()
-        workspaceName == fabric.resolve_workspace_name(workspaceId)
-
-    workspace_client = _get_or_create_workspace_client(workspaceName)
-    ds = workspace_client.get_dataset(datasetName)
-    m = ds.Model
-
-    header = pd.DataFrame(columns=['Culture Name', 'Table Name', 'Object Name', 'Object Type', 'Translation', 'Property'])
-    df = pd.DataFrame(header)
-
-    for c in m.Cultures:
-        for tr in c.ObjectTranslations:
-            oType = str(tr.Object.ObjectType)
-            oName = str(tr.Object.Name)
-            tValue = str(tr.Value)
-            prop = str(tr.Property)
-                      
-            if oType == 'Table':
-                new_data = {'Culture Name': c.Name, 'Table Name': oName, 'Object Name': oName, 'Object Type': oType, 'Translation': tValue, 'Property': prop}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)                
-            elif oType == 'Level':
-                hierarchyName = tr.Object.Parent.Name
-                tName = tr.Object.Parent.Parent.Name
-                levelName = "'" + hierarchyName + "'[" + oName + "]"
-                new_data = {'Culture Name': c.Name, 'Table Name': tName, 'Object Name': levelName, 'Object Type': oType, 'Translation': tValue, 'Property': prop}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)                
-            else:
-                tName = tr.Object.Table.Name
-                new_data = {'Culture Name': c.Name, 'Table Name': tName, 'Object Name': oName, 'Object Type': oType, 'Translation': tValue, 'Property': prop}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)                
-    return df
-
-def list_perspectives(datasetName, workspaceName = None):
-
-    if workspaceName == None:
-        workspaceId = fabric.get_workspace_id()
-        workspaceName = fabric.resolve_workspace_name(workspaceId)
-
-    workspace_client = _get_or_create_workspace_client(workspaceName)
-    ds = workspace_client.get_dataset(datasetName)
-    m = ds.Model
-
-    header = pd.DataFrame(columns=['Perspective Name', 'Table Name', 'Object Name', 'Object Type'])
-    df = pd.DataFrame(header)
-
-    for p in m.Perspectives:
-        for pt in p.PerspectiveTables:
-            for pc in pt.PerspectiveColumns:
-                objectType = 'Column'
-                new_data = {'Perspective Name': p.Name, 'Table Name': pt.Name, 'Object Name': pc.Name, 'Object Type': objectType}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-            for pm in pt.PerspectiveMeasures:
-                objectType = 'Measure'
-                new_data = {'Perspective Name': p.Name, 'Table Name': pt.Name, 'Object Name': pm.Name, 'Object Type': objectType}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-            for ph in pt.PerspectiveHierarchies:
-                objectType = 'Hierarchy'
-                new_data = {'Perspective Name': p.Name, 'Table Name': pt.Name, 'Object Name': ph.Name, 'Object Type': objectType}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-
-    return df
-
-def list_calculation_items(datasetName, workspaceName = None):
-
-    if workspaceName == None:
-        workspaceId = fabric.get_workspace_id()
-        workspaceName = fabric.resolve_workspace_name(workspaceId)
-
-    workspace_client = _get_or_create_workspace_client(workspaceName)
-    ds = workspace_client.get_dataset(datasetName)
-    m = ds.Model
-
-    header = pd.DataFrame(columns=['Calculation Group Name', 'Hidden', 'Precedence', 'Description', 'Calculation Item Name', 'Ordinal', 'Expression', 'Format String Expression'])
-    df = pd.DataFrame(header)
-
-    for t in m.Tables:
-        if t.CalculationGroup != None:
-            for ci in t.CalculationGroup.CalculationItems:
-                fsd = None
-                try:
-                    fsd = ci.FormatStringDefinition.Expression
-                except:
-                    pass
-                new_data = {'Calculation Group Name': t.Name, 'Hidden': t.IsHidden, 'Precedence': t.CalculationGroup.Precedence, 'Description': t.Description, 'Calculation Item Name': ci.Name, 'Ordinal': ci.Ordinal, 'Expression': ci.Expression, 'Format String Expression': fsd}
-                df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True)
-
-    return df
-
 workspaceId = fabric.get_workspace_id()
 workspaceName = fabric.resolve_workspace_name(workspaceId)
 
@@ -149,9 +58,9 @@ dfM = fabric.list_measures(datasetName)
 dfR = fabric.list_relationships(datasetName)
 dfRole = fabric.get_roles(datasetName)
 dfRLS = fabric.get_row_level_security_permissions(datasetName)
-dfCI = list_calculation_items(datasetName)
-dfP = list_perspectives(datasetName)
-dfTranslation = list_translations(datasetName)
+dfCI = fabric.list_calculation_items(datasetName)
+dfP = fabric.list_perspectives(datasetName)
+dfTranslation = fabric.list_translations(datasetName)
 dfH = fabric.list_hierarchies(datasetName)
 
 recT, cfbT, sfbT, mp = TOM.RelationshipEndCardinality, TOM.CrossFilteringBehavior, TOM.SecurityFilteringBehavior, TOM.ModelPermission
