@@ -75,20 +75,20 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
             refreshPolicy = dfT.loc[(dfT['Name'] == table_name), 'Refresh Policy'].iloc[0]
             sourceType = dfP.loc[(dfP['Table Name'] == table_name), 'Source Type'].iloc[0]
 
-            if sourceType == 'M':
+            if sourceType == 'M' or refreshPolicy:
                 sb = sb + '\n' + 'shared ' + tName + ' = '
-
-            if refreshPolicy == True and sourceType == 'M':
-                sb = sb + sourceExpression + ';'
 
             partitions_in_table = dfP.loc[dfP['Table Name'] == table_name, 'Partition Name'].unique()
 
             i=1
             for partition_name in partitions_in_table:
                 pSourceType = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Source Type'].iloc[0]
-                if refreshPolicy == False and pSourceType == 'M' and i==1:
-                    pQuery = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Query'].iloc[0]
+                pQuery = dfP.loc[(dfP['Table Name'] == table_name) & (dfP['Partition Name'] == partition_name), 'Query'].iloc[0]
+                
+                if pSourceType == 'M' and i==1:                    
                     sb = sb + pQuery + ';'
+                elif refreshPolicy and i==1:
+                    sb = sb + sourceExpression + ';'
                 i+=1
 
         for index, row in dfE.iterrows():
@@ -107,7 +107,8 @@ def create_pqt_file(datasetName, fileName = 'PowerQueryTemplate'):
 
         for tName in dfP['Table Name'].unique():
             sourceType = dfP.loc[(dfP['Table Name'] == tName), 'Source Type'].iloc[0]
-            if sourceType == 'M':
+            refreshPolicy = dfT.loc[(dfT['Name'] == tName), 'Refresh Policy'].iloc[0]
+            if sourceType == 'M' or refreshPolicy:
                 queryMetadata.append(QueryMetadata(tName, None, None, None, True, False))
 
         for i, r in dfE.iterrows():
