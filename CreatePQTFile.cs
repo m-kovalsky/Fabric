@@ -36,19 +36,25 @@ string mdfilePath = subFolderPath + @"\" + mdfileName;
 var sb = new System.Text.StringBuilder();
 string newline = Environment.NewLine;
 sb.Append("section Section1;");
+
 foreach (var t in Model.Tables)
 {
+    string sourceType = t.Partitions[0].SourceType.ToString();
     string tName = "#\"" + t.Name + "\"";
-    sb.Append(newline + "shared " + tName + " = ");
-
-    if (t.EnableRefreshPolicy)
+    string pQuery = t.Partitions[0].Query;
+    
+    if (sourceType == "M" || t.EnableRefreshPolicy)
+    {
+        sb.Append(newline + "shared " + tName + " = ");
+    }
+    
+    if (sourceType == "M")
+    {
+        sb.Append(pQuery + ";");
+    }
+    else if (t.EnableRefreshPolicy)
     {
         sb.Append(t.SourceExpression + ";");
-    }
-    else
-    {
-        string pQuery = t.Partitions[0].Query;
-        sb.Append(pQuery + ";");
     }
 }
 
@@ -71,7 +77,12 @@ var queryMetadata = new List<QueryMetadata>();
 foreach (var t in Model.Tables)
 {
     string tName = t.Name;
-    queryMetadata.Add( new QueryMetadata {QueryName = tName, QueryGroupId = null, LastKnownIsParameter = null, LastKnownResultTypeName = null, LoadEnabled = true, IsHidden = false});
+    string sourceType = t.Partitions[0].SourceType.ToString();
+
+    if (sourceType == "M" || t.EnableRefreshPolicy)
+    {
+        queryMetadata.Add( new QueryMetadata {QueryName = tName, QueryGroupId = null, LastKnownIsParameter = null, LastKnownResultTypeName = null, LoadEnabled = true, IsHidden = false});
+    }
 }
 foreach (var e in Model.Expressions)
 {
