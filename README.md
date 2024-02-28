@@ -1018,6 +1018,21 @@ SUMMARIZECOLUMNS(
 SELECT * FROM $SYSTEM.DISCOVER_SESSIONS
 ```
 
+## Vertipaq Info
+
+#### Shows the current in memory model size based on the specific columns which are in memory
+```python
+import sempy
+import sempy.fabric as fabric
+
+datasetName = '' #Enter dataset name
+
+dfC = fabric.list_columns(datasetName,extended=True)
+dfC_filt = dfC[dfC['Is Resident']]
+total_size_sum = dfC_filt['Total Size'].sum()
+total_size_sum
+```
+
 ## Direct Lake
 
 #### Show the guardrails by SKU for Direct Lake models
