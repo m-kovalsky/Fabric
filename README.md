@@ -1057,11 +1057,18 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 
 The following process automates the migration of an import/DirectQuery model to a new Direct Lake model. The first step is specifically applicable to models which use Power Query to perform data transformations. If your model does not use Power Query, you must migrate the base tables used in your semantic model to a Fabric lakehouse.
 
-*Note: Make sure you enable XMLA Read/Write for your capacity/workspace*
-*Note: Enable the following setting: Workspace -> Workspace Settings -> General -> Data model settings -> Users can edit data models in the Power BI service*
+### Prerequisites
+
+* Make sure you [enable XMLA Read/Write](https://learn.microsoft.com/power-bi/enterprise/service-premium-connect-tools#enable-xmla-read-write) for your capacity
+* Make sure you have a [lakehouse](https://learn.microsoft.com/fabric/onelake/create-lakehouse-onelake#create-a-lakehouse) in a Fabric workspace
+* Make sure you have a [Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook#create-notebooks) with [semantic-link installed](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#load-semantic-link-into-a-custom-fabric-environment)
+* [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
+* Enable the following [setting](https://learn.microsoft.com/power-bi/transform-model/service-edit-data-models#enable-the-preview-feature): Workspace -> Workspace Settings -> General -> Data model settings -> Users can edit data models in the Power BI service
+
+### Migration steps
 
 1. Migrate Power Query logic to Dataflows Gen2 using this [process](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#migrate-power-query-logic-to-dataflows-gen2)
-2. Run this [script](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#create-a-new-blank-semantic-model) in a Fabric Notebook to create a new blank semantic model
+2. Run this [script](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#create-a-new-blank-semantic-model) in a Fabric notebook to create a new blank semantic model
 3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/AddTablesColumnsToNewModel.py) in a Fabric notebook to create the tables and columns in the new semantic model
 4. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/MigrateObjectsToNewModel.py) in a Fabric notebook to migrate relavent objects to the new semantic model (table properties, column properties, hierarchies, measures, relationships, roles, row level security, calculation groups and calculation items, perspectives, and translations
 5. Refresh the new semantic model (click the refresh icon next to the semantic model within the Workspace view)
