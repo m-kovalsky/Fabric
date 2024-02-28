@@ -353,6 +353,26 @@ x = fabric.get_workspace_id()
 x
 ```
 
+## Apps
+
+#### Shows a list of apps within the workspace
+```python
+import sempy
+import sempy.fabric as fabric
+x = fabric.list_apps()
+x
+```
+
+## Gateways
+
+#### Shows a list of gateways within the workspace
+```python
+import sempy
+import sempy.fabric as fabric
+x = fabric.list_gateways()
+x
+```
+
 ## Reports
 
 #### Shows a list of reports within the workspace
@@ -476,6 +496,15 @@ datasetName = '' #Enter your dataset name
 workspaceName = '' #Enter your workspace name
 x = fabric.get_tmsl(datasetName, workspaceName)
 print(x)
+```
+
+#### List the data sources within a given dataset (semantic model)
+```python
+import sempy
+import sempy.fabric as fabric
+datasetName = '' #Enter dataset name
+x = fabric.list_datasources(datasetName)
+x
 ```
 
 #### List the tables within a given dataset (semantic model)
