@@ -1035,6 +1035,17 @@ total_size_sum
 
 ## Direct Lake
 
+#### View the columns which have the highest temperature and are in memory
+```python
+import sempy
+import sempy.fabric as fabric
+
+datasetName = '' #Enter dataset name
+
+dfC = fabric.list_columns(datasetName, extended=True).sort_values(by='Temperature', ascending=False)
+dfC
+```
+
 #### Show the guardrails by SKU for Direct Lake models
 ```python
 import pandas as pd
