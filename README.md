@@ -1027,7 +1027,7 @@ import sempy.fabric as fabric
 
 datasetName = '' #Enter dataset name
 
-dfC = fabric.list_columns(datasetName,extended=True)
+dfC = fabric.list_columns(datasetName, extended=True)
 dfC_filt = dfC[dfC['Is Resident']]
 total_size_sum = dfC_filt['Total Size'].sum()
 total_size_sum
