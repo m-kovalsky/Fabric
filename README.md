@@ -618,6 +618,15 @@ x = fabric.list_calculation_items(datasetName)
 x
 ```
 
+#### List the perspectives and perspective objects within a given dataset (semantic model)
+```python
+import sempy
+import sempy.fabric as fabric
+datasetName = '' #Enter dataset name
+x = fabric.list_perspectives(datasetName)
+x
+```
+
 #### List the translations within a given dataset (semantic model)
 ```python
 import sempy
