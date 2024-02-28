@@ -609,6 +609,15 @@ x = fabric.get_row_level_security_permissions(datasetName)
 x
 ```
 
+#### List the calculation groups and calculation items within a given dataset (semantic model)
+```python
+import sempy
+import sempy.fabric as fabric
+datasetName = '' #Enter dataset name
+x = fabric.list_calculation_items(datasetName)
+x
+```
+
 #### List the translations within a given dataset (semantic model)
 ```python
 import sempy
