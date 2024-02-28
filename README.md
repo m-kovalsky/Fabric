@@ -704,6 +704,8 @@ def create_blank_semantic_model(datasetName, compatibilityLevel = 1604, workspac
   '''
 
   return fabric.execute_tmsl(script = tmsl, workspace = workspaceName)
+
+create_blank_semantic_model('') #Enter semantic model name to be created
 ```
 
 ## Dataset Refresh
