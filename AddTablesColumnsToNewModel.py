@@ -7,6 +7,7 @@ from sempy.fabric._cache import _get_or_create_workspace_client
 from sempy.fabric._client._connection_mode import ConnectionMode
 import Microsoft.AnalysisServices.Tabular as TOM
 from sempy.fabric._client import DatasetXmlaClient
+from notebookutils import mssparkutils
 import System
 
 datasetName = '' # Original semantic model name
@@ -82,70 +83,82 @@ def get_shared_expression(lakehouseName = None, workspaceName = None):
 
     return x
 
-shEx = get_shared_expression()
+# Check that lakehouse is attachd to the notebook
+mounts = pd.DataFrame(mssparkutils.fs.mounts())
+mounts_filt = mounts[mounts['storageType'] == 'Lakehouse']
 
-dfC = fabric.list_columns(datasetName)
-dfT = list_tables(datasetName)
+if len(mounts_filt) == 1:
+    print('Lakehouse attached to notebook\n')
 
-for d in tom_server.Databases:
-    if d.Name == newDatasetName:
-        print(f"Updating '{d.Name}' based on '{datasetName}'...")
-        m = d.Model
-        print(f"\nCreating shared expression parameter...")
-        exp = TOM.NamedExpression()
-        eName = 'DatabaseQuery'
-        exp.Name = eName
-        exp.Kind = TOM.ExpressionKind.M
-        exp.Expression = shEx
-        if not any(e.Name == eName for e in m.Expressions):
-            m.Expressions.Add(exp)
-            print(f"'{eName}' shared expression has been added.")
+    shEx = get_shared_expression()
 
-        for tName in dfC['Table Name'].unique():
-            tType = dfT.loc[(dfT['Name'] == tName), 'Type'].iloc[0]
-            tDC = dfC.loc[(dfC['Table Name'] == tName), 'Data Category'].iloc[0]
-            tDesc = dfC.loc[(dfC['Table Name'] == tName), 'Description'].iloc[0]
+    dfC = fabric.list_columns(datasetName)
+    dfT = list_tables(datasetName)
 
-            # Create the table with its columns for regular tables that do not already exist in the model
-            if tType == 'Table' and not any(t.Name == tName for t in m.Tables):
-                tbl = TOM.Table()        
-                tbl.Name = tName
-                tbl.DataCategory = tDC
-                tbl.Description = tDesc
+    for d in tom_server.Databases:
+        if d.Name == newDatasetName:
+            print(f"Updating '{d.Name}' based on '{datasetName}'...")
+            m = d.Model
+            print(f"\nCreating shared expression parameter...")
+            exp = TOM.NamedExpression()
+            eName = 'DatabaseQuery'
+            exp.Name = eName
+            exp.Kind = TOM.ExpressionKind.M
+            exp.Expression = shEx
+            if not any(e.Name == eName for e in m.Expressions):
+                m.Expressions.Add(exp)
+                print(f"'{eName}' shared expression has been added.")
 
-                ep = TOM.EntityPartitionSource()
-                ep.Name = tName
-                ep.EntityName = tName
-                ep.ExpressionSource = exp
+            for tName in dfC['Table Name'].unique():
+                tType = dfT.loc[(dfT['Name'] == tName), 'Type'].iloc[0]
+                tDC = dfC.loc[(dfC['Table Name'] == tName), 'Data Category'].iloc[0]
+                tDesc = dfC.loc[(dfC['Table Name'] == tName), 'Description'].iloc[0]
 
-                part = TOM.Partition()
-                part.Name = tName # this needs to be the lakehouse table name
-                part.Source = ep
-                part.Mode = TOM.ModeType.DirectLake
+                # Create the table with its columns for regular tables that do not already exist in the model
+                if tType == 'Table' and not any(t.Name == tName for t in m.Tables):
+                    tbl = TOM.Table()        
+                    tbl.Name = tName
+                    tbl.DataCategory = tDC
+                    tbl.Description = tDesc
 
-                tbl.Partitions.Add(part)
+                    ep = TOM.EntityPartitionSource()
+                    ep.Name = tName
+                    ep.EntityName = tName.replace(' ', '_') #lakehouse table names use underscores instead of spaces
+                    ep.ExpressionSource = exp
 
-                columns_in_table = dfC.loc[dfC['Table Name'] == tName, 'Column Name'].unique()
-           
-                print(f"\nCreating columns for '{tName}' table...")           
-                for cName in columns_in_table:
-                    scName = dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Source'].iloc[0]
-                    cType = dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Type'].iloc[0]
-                    cHid = bool(dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Hidden'].iloc[0])
-                    cDataType = dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Data Type'].iloc[0]
+                    part = TOM.Partition()
+                    part.Name = tName
+                    part.Source = ep
+                    part.Mode = TOM.ModeType.DirectLake
 
-                    if cType == 'Data' and not any(t.Name == tName and c.Name == cName for t in m.Tables for c in t.Columns):
-                        col = TOM.DataColumn()
-                        col.Name = cName
-                        col.IsHidden = cHid
-                        col.SourceColumn = scName #this needs to be the lakehouse column name
-                        col.DataType = System.Enum.Parse(TOM.DataType, cDataType)
+                    tbl.Partitions.Add(part)
 
-                        tbl.Columns.Add(col)
-                        print(f"The '{tName}'[{cName}] column has been added.")
-           
-                m.Tables.Add(tbl)
-                print(f"The '{tName}' table has been added.")
+                    columns_in_table = dfC.loc[dfC['Table Name'] == tName, 'Column Name'].unique()
+               
+                    print(f"\nCreating columns for '{tName}' table...")           
+                    for cName in columns_in_table:
+                        scName = dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Source'].iloc[0]
+                        cType = dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Type'].iloc[0]
+                        cHid = bool(dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Hidden'].iloc[0])
+                        cDataType = dfC.loc[(dfC['Table Name'] == tName) & (dfC['Column Name'] == cName), 'Data Type'].iloc[0]
 
-        m.SaveChanges()
-        print(f"\nAll regular tables and columns have been added to the model.")
+                        if cType == 'Data' and not any(t.Name == tName and c.Name == cName for t in m.Tables for c in t.Columns):
+                            col = TOM.DataColumn()
+                            col.Name = cName
+                            col.IsHidden = cHid
+                            col.SourceColumn = scName.replace(' ', '_') #lakehouse column names use underscores instead of spaces
+                            col.DataType = System.Enum.Parse(TOM.DataType, cDataType)
+
+                            tbl.Columns.Add(col)
+                            print(f"The '{tName}'[{cName}] column has been added.")
+               
+                    m.Tables.Add(tbl)
+                    print(f"The '{tName}' table has been added.")
+
+            m.SaveChanges()
+            print(f"\nAll regular tables and columns have been added to the model.")
+
+else:
+    print('Lakehouse not attached to notebook. Please add your lakehouse to this notebook.')
+    print(f"In the 'Explorer' window to the left, click 'Lakehouses' to add your lakehouse to this notebook")
+    print(f"\nLearn more here: https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse")
