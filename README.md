@@ -1135,19 +1135,24 @@ The following process automates the migration of an import/DirectQuery model to 
 
 * Make sure you [enable XMLA Read/Write](https://learn.microsoft.com/power-bi/enterprise/service-premium-connect-tools#enable-xmla-read-write) for your capacity
 * Make sure you have a [lakehouse](https://learn.microsoft.com/fabric/onelake/create-lakehouse-onelake#create-a-lakehouse) in a Fabric workspace
-* Make sure you have a [Fabric notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook#create-notebooks) with [semantic-link installed](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#load-semantic-link-into-a-custom-fabric-environment)
-* [Install semantic-link](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#load-semantic-link-into-a-custom-fabric-environment) version 0.6.0 or higher in your notebook/environment
-* [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
 * Enable the following [setting](https://learn.microsoft.com/power-bi/transform-model/service-edit-data-models#enable-the-preview-feature): Workspace -> Workspace Settings -> General -> Data model settings -> Users can edit data models in the Power BI service
 
-### Migration steps
+### Instructions
 
-1. Migrate Power Query logic to Dataflows Gen2 using this [process](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#migrate-power-query-logic-to-dataflows-gen2)
-2. Run this [script](https://github.com/m-kovalsky/Fabric?tab=readme-ov-file#create-a-new-blank-semantic-model) in a Fabric notebook to create a new blank semantic model
-3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/AddTablesColumnsToNewModel.py) in a Fabric notebook to create the tables and columns in the new semantic model
-4. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/MigrateObjectsToNewModel.py) in a Fabric notebook to migrate relavent objects to the new semantic model (table properties, column properties, hierarchies, measures, relationships, roles, row level security, calculation groups and calculation items, perspectives, and translations
-5. Refresh the new semantic model (click the refresh icon next to the semantic model within the Workspace view)
-6. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) in a Fabric notebook to rebind reports to the new semantic model
+1. Download this [notebook](https://github.com/m-kovalsky/Fabric/blob/main/Direct%20Lake%20Migration/Migration%20to%20Direct%20Lake.ipynb) and import it into your Fabric workspace
+2. Make sure you are in the ['Data Engineering' persona](https://learn.microsoft.com/fabric/get-started/microsoft-fabric-overview#components-of-microsoft-fabric). Click the icon at the bottom left corner of your Workspace screen and select 'Data Engineering'
+3. In your workspace, select 'New -> Import notebook' and import the notebook from step 1.
+4. [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
+5. Follow the instructions within the notebook.
+
+### The migration process 
+1. The first step of the notebook creates a Power Query Template (.pqt) file which eases the migration of Power Query logic to Dataflows Gen2. This is only necessary if you have a semantic model with Power Query logic.
+2. After the .pqt file is created, sync files from your OneLake explorer, create a new Dataflows Gen2, and import the Power Query Template file.
+3. Manually map each table to its destination (your lakehouse).
+4. Publish the Dataflow Gen2 and wait for it to finish creating the delta lake tables in your lakehouse.
+5. Back in the notebook, the next step will create your new Direct Lake semantic model with the name of your choice, taking all the valuable properties from the orignal semantic model.
+6. The next step runs a refresh/framing against the new semantic model to ensure it is ready to go.
+7. Finally, you can easily rebind your reports to the new Direct Lake semantic model in one click in the last cell of the notebook.
 
 ### Completing these steps will do the following:
 * Offload your Power Query logic to Dataflows Gen2 inside of Fabric (where it can be maintained and development can continue).
