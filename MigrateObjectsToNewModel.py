@@ -83,8 +83,10 @@ for d in tom_server.Databases:
         for t in m.Tables:
             for c in t.Columns:
                 if not c.Name.startswith('RowNumber-'):
-                    dfC_filt = dfC[(dfC['Table Name'] == t.Name) & (dfC['Source'] == c.SourceColumn)]
-                    c.Name = dfC_filt['Column Name'].iloc[0]
+                    dfC_filt = dfC[(dfC['Table Name'] == t.Name) & (dfC['Column Name'] == c.Name)]
+                    cName = dfC_filt['Column Name'].iloc[0]
+                    c.Name = cName
+                    c.SourceColumn = cName.replace(' ', '_')
                     c.IsHidden = bool(dfC_filt['Hidden'].iloc[0])
                     c.DataType = System.Enum.Parse(TOM.DataType, dfC_filt['Data Type'].iloc[0])
                     c.DisplayFolder = dfC_filt['Display Folder'].iloc[0]
@@ -353,7 +355,7 @@ for d in tom_server.Databases:
                 tbl.Name = cgName
                 tbl.CalculationGroup = TOM.CalculationGroup()
                 tbl.IsHidden = isHidden
-                tbl.CalculationGroup.Precedence = prec
+                tbl.CalculationGroup.Precedence = int(prec)
                 tbl.Description = desc                                    
 
                 print('\nCreating calculation group columns...')
@@ -398,7 +400,7 @@ for d in tom_server.Databases:
                         ci = TOM.CalculationItem()
                         fsd = TOM.FormatStringDefinition()
                         ci.Name = calcItem
-                        ci.Ordinal = ordinal
+                        ci.Ordinal = int(ordinal)
                         ci.Expression = expr
                         ci.FormatStringDefinition = fsd.Expression = fse
 
