@@ -1147,7 +1147,7 @@ The following process automates the migration of an import/DirectQuery model to 
 
 ### The migration process 
 1. The first step of the notebook creates a Power Query Template (.pqt) file which eases the migration of Power Query logic to Dataflows Gen2. This is only necessary if you have a semantic model with Power Query logic.
-2. After the .pqt file is created, sync files from your OneLake explorer, create a new Dataflows Gen2, and import the Power Query Template file.
+2. After the .pqt file is created, sync files from your [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222), create a new Dataflows Gen2, and import the Power Query Template file.
 3. Manually map each table to its destination (your lakehouse).
 4. Publish the Dataflow Gen2 and wait for it to finish creating the delta lake tables in your lakehouse.
 5. Back in the notebook, the next step will create your new Direct Lake semantic model with the name of your choice, taking all the valuable properties from the orignal semantic model.
