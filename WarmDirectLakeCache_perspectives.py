@@ -1,10 +1,11 @@
 import sempy
 import sempy.fabric as fabric
 import pandas as pd
+from tqdm.auto import tqdm
 
 def warm_direct_lake_cache(datasetName, perspectiveName, addKeys = False):
 
-    dfPersp = list_perspectives(datasetName = datasetName, include_objects = True)
+    dfPersp = fabric.list_perspectives(datasetName = datasetName)
     dfPersp = dfPersp[(dfPersp['Perspective Name'] == perspectiveName) & (dfPersp['Object Type'] == "Column")]
     dfPersp['DAX Object Name'] = "'" + dfPersp['Table Name'] + "'[" + dfPersp['Object Name'] + "]"
 
@@ -37,14 +38,15 @@ def warm_direct_lake_cache(datasetName, perspectiveName, addKeys = False):
 
     tbls = list(set(value.split('[')[0] for value in merged_list_unique))
 
-    for tableName in tbls:
+    for tableName in (bar := tqdm(tbls)):
         filtered_list = [value for value in merged_list_unique if value.startswith(f"{tableName}[")]
+        bar.set_description(f"Warming {tableName}...")
         css = ','.join(map(str, filtered_list))
         dax = """EVALUATE TOPN(1,SUMMARIZECOLUMNS(""" + css + "))"""
-        x = fabric.evaluate_dax(datasetName, dax)
-        
+        x = fabric.evaluate_dax(datasetName, dax)            
+    
     print(f"The following columns have been put into memory:")
-
+    
     return df
 
-warm_direct_lake_cache('', '', True) #Enter dataset name, Enter perspective containing objects for warming; Setting addKeys paramter to True will ensure foreign/primary keys from tables in the perspective are also put in memory
+warm_direct_lake_cache('AdvWorks', 'DirectLakeWarm', True) #Enter dataset name, Enter perspective containing objects for warming; Setting addKeys paramter to True will ensure foreign/primary keys from tables in the perspective are also put in memory
