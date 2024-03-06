@@ -1139,7 +1139,7 @@ The following process automates the migration of an import/DirectQuery model to 
 
 ### Instructions
 
-1. Download this [notebook](https://github.com/m-kovalsky/Fabric/blob/main/Direct%20Lake%20Migration/Migration%20to%20Direct%20Lake.ipynb).
+1. Download this [notebook](https://github.com/m-kovalsky/Fabric/blob/main/Direct%20Lake%20Migration/Migration%20to%20Direct%20Lake.ipynb). **Use version 0.1.3 or higher only.**
 2. Make sure you are in the ['Data Engineering' persona](https://learn.microsoft.com/fabric/get-started/microsoft-fabric-overview#components-of-microsoft-fabric). Click the icon at the bottom left corner of your Workspace screen and select 'Data Engineering'
 3. In your workspace, select 'New -> Import notebook' and import the notebook from step 1.
 4. [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
