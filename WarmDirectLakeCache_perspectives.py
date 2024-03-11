@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 
 def warm_direct_lake_cache(datasetName, perspectiveName, addKeys = False):
 
-    dfPersp = fabric.list_perspectives(datasetName = datasetName)
+    dfPersp = fabric.list_perspectives(dataset = datasetName)
     dfPersp = dfPersp[(dfPersp['Perspective Name'] == perspectiveName) & (dfPersp['Object Type'] == "Column")]
     dfPersp['DAX Object Name'] = "'" + dfPersp['Table Name'] + "'[" + dfPersp['Object Name'] + "]"
 
