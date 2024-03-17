@@ -4,7 +4,7 @@ The following code snippets may be executed in a [Microsoft Fabric notebook](htt
 This repo is intended to help business intelligence analysts/developers and data scientists become more familiar with notebooks (and therefore Python) in Microsoft Fabric and the potential benefits of using the Semantic Link library.
 
 ## Requirements
-Semantic-link library version 0.6.0 or higher
+Semantic-link library version 0.7.0 or higher
 
 ## Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
 ```python
@@ -1139,7 +1139,7 @@ The following process automates the migration of an import/DirectQuery model to 
 
 ### Instructions
 
-1. Download this [notebook](https://github.com/m-kovalsky/Fabric/blob/main/Direct%20Lake%20Migration/Migration%20to%20Direct%20Lake.ipynb). **Use version 0.1.6 or higher only.**
+1. Download this [notebook](https://github.com/m-kovalsky/Fabric/blob/main/Direct%20Lake%20Migration/Migration%20to%20Direct%20Lake.ipynb). **Use version 0.1.8 or higher only.**
 2. Make sure you are in the ['Data Engineering' persona](https://learn.microsoft.com/fabric/get-started/microsoft-fabric-overview#components-of-microsoft-fabric). Click the icon at the bottom left corner of your Workspace screen and select 'Data Engineering'
 3. In your workspace, select 'New -> Import notebook' and import the notebook from step 1.
 4. [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
