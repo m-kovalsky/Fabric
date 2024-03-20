@@ -1112,28 +1112,24 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 
 *Note: For multi-partitioned tables, this process will take just the first partition from the table. In the case of Incremental Refresh, it will take the Source Expression (M query) from the table and ignore the individual partitions.*
 
-### Method 1: [Fabric Notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook)
-1. Open a notebook in Fabric and make sure that the [semantic-link library is installed](https://github.com/m-kovalsky/Fabric#load-semantic-link-into-a-custom-fabric-environment)
-2. Connect the notebook to your lakehouse
-3. Run this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.py) in the notebook, specifying the semantic model name in the last line of the script which calls the function
+### [Fabric Notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook)
+1. Connect the notebook to your lakehouse.
+2. Run the following command in a Fabric notebook to install the .whl file.
+```python
+%pip install "https://raw.githubusercontent.com/m-kovalsky/Fabric/main/Direct%20Lake%20Migration/fabric_cat_tools-0.2.0-py3-none-any.whl"
+```
+3. Run this code, specifying the semantic model name in the datasetName parameter.
+```python
+import fabric_cat_tools as fct
+datasetName = '' #Enter the import/DQ semantic model name
+fct.create_pqt_file(datasetName)
+```
 4. Make sure that you have installed [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222)
 5. Create a new Dataflow Gen2 within your Fabric workspace
 6. Select the PowerQueryTemplate.pqt file created in step 3 (*note: you may have to right click on the folder in the Windows file explorer and select 'OneLake -> Sync from OneLake'*)
 7. Click 'Configure connection' to configure the connection to the data source
 8. Select a destination for each table (your desired lakehouse)
 9. Click 'Publish'
-
-### Method 2: [Tabular Editor](https://tabulareditor.com/)
-1. Open your model in Tabular Editor (version 2 or 3)
-2. Paste this [script](https://github.com/m-kovalsky/Fabric/blob/main/CreatePQTFile.cs) into the C# script window in Tabular Editor
-3. Update the folderPath parameter in line 29 to be the folder where the .pqt (Power Query Template) fill will be created
-4. Run the script
-5. Create a new Dataflow Gen2 within your Fabric workspace
-6. Click on the link 'Import from a Power Query template'
-7. Select the PowerQueryTemplate.pqt file created in step 4
-8. Click 'Configure connection' to configure the connection to the data source
-9. Select a destination for each table (your desired lakehouse)
-10. Click 'Publish'
  
 ## Direct Lake migration
 
