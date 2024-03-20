@@ -1,34 +1,24 @@
 import sempy
 import sempy.fabric as fabric
-from sempy.fabric._client import DatasetXmlaClient
-from sempy.fabric._cache import _get_or_create_workspace_client
-sempy.fabric._client._utils._init_analysis_services()
-workspaceName = "" #Enter workspace name
-datasetName = "" #Enter dataset name
-workspace_client = _get_or_create_workspace_client(workspaceName)
-ds = workspace_client.get_dataset(datasetName)
+import re
 
-m = ds.Model
+workspaceName = '' #Enter workspace name
+datasetName = '' #Enter dataset name
 
-isDirectLake = "No"
+dfP = fabric.list_partitions(dataset = datasetName, workspace = workspaceName)
+isDirectLake = any(r['Mode'] == 'DirectLake' for i, r in dfP.iterrows())
 
-for t in m.Tables:
-    for p in t.Partitions:
-        if str(p.Mode) == "DirectLake":
-            isDirectLake = "Yes"
+if isDirectLake:
+    print(f"The '{datasetName}' semantic model in the '{workspaceName}' workspace is in Direct Lake mode.")
+    dfE = fabric.list_expressions(dataset = datasetName, workspace = workspaceName)
+    dfE_filt = dfE[dfE['Name'] == 'DatabaseQuery']
+    expr = dfE_filt['Expression'].iloc[0]
+    
+    matches = re.findall(r'"([^"]*)"', expr)
+    sqlEndpoint = matches[0]
+    sqlEndpointId = matches[1]
 
-if isDirectLake == "No":
-    print(isDirectLake + ", this model is not in DirectLake mode")
+    print('SQL Endpoint: ' + sqlEndpoint)
+    print('SQL Endpoint ID: ' + sqlEndpointId)
 else:
-    print(isDirectLake + ", this model is in DirectLake mode")
-
-if isDirectLake == "Yes":
-    for e in m.Expressions:
-        index = e.Expression.find("(\"") + 2
-        index2 = e.Expression.find(".net\"") + 4
-        sqlendpoint = e.Expression[index:index2]
-        print("SQL Endpoint: " + sqlendpoint)
-        index3 = e.Expression.find(",") + 3
-        index4 = e.Expression.find("\")")
-        lakehouseName = e.Expression[index3:index4]
-        print("Lakehouse: " + lakehouseName)
+    print(f"The '{datasetName}' semantic model in the '{workspaceName}' workspace is not in Direct Lake mode.")
