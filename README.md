@@ -784,15 +784,12 @@ x
 ```python
 import sempy
 import sempy.fabric as fabric
-from sempy.fabric._client import DatasetXmlaClient
-from sempy.fabric._cache import _get_or_create_workspace_client
-sempy.fabric._client._utils._init_analysis_services()
+
 workspaceName = '' #Enter workspace name
 datasetName = '' #Enter dataset name
-workspace_client = _get_or_create_workspace_client(workspaceName)
-ds = workspace_client.get_dataset(datasetName)
 
-m = ds.Model
+tom_server = fabric.create_tom_server(readonly=True, workspace=workspaceName)
+m = tom_server.Databases.GetByName(datasetName).Model
 
 for t in m.Tables:
 	print(t.Name)
