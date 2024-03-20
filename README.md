@@ -792,7 +792,7 @@ tom_server = fabric.create_tom_server(readonly=True, workspace=workspaceName)
 m = tom_server.Databases.GetByName(datasetName).Model
 
 for t in m.Tables:
-	print(t.Name)
+    print(t.Name)
 ```
 
 #### Create a new measure in a semantic model
