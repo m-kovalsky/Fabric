@@ -1124,12 +1124,12 @@ import fabric_cat_tools as fct
 datasetName = '' #Enter the import/DQ semantic model name
 fct.create_pqt_file(datasetName)
 ```
-4. Make sure that you have installed [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222)
-5. Create a new Dataflow Gen2 within your Fabric workspace
-6. Select the PowerQueryTemplate.pqt file created in step 3 (*note: you may have to right click on the folder in the Windows file explorer and select 'OneLake -> Sync from OneLake'*)
-7. Click 'Configure connection' to configure the connection to the data source
-8. Select a destination for each table (your desired lakehouse)
-9. Click 'Publish'
+4. Make sure that you have installed [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222).
+5. Create a new Dataflow Gen2 within your Fabric workspace.
+6. Select the PowerQueryTemplate.pqt file created in step 3 (*note: you may have to right click on the folder in the Windows file explorer and select 'OneLake -> Sync from OneLake'*).
+7. Click 'Configure connection' to configure the connection to the data source.
+8. Select a destination for each table (your desired lakehouse).
+9. Click 'Publish'.
  
 ## Direct Lake migration
 
