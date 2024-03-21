@@ -62,8 +62,9 @@ import sempy
 import sempy.fabric as fabric
 
 all_members = inspect.getmembers(fabric) #Enter the library alias
-all_functions = [member[0] for member in all_members if inspect.isfunction(member[1])]
-all_functions
+for name, member in all_members:
+    if inspect.isfunction(member):
+        print(name)
 ```
 
 #### Show useful information about a given function
