@@ -67,6 +67,20 @@ for name, member in all_members:
         print(name)
 ```
 
+### Show all functions in a given Python library and their respective parameters
+```python
+import inspect
+import sempy
+import sempy.fabric as fabric
+
+functions = inspect.getmembers(fabric,inspect.isfunction) #Enter the library alias
+
+for name, func in functions:
+    signature = inspect.signature(func)
+    parameters = list(signature.parameters.keys())
+    print(f"{name} : {parameters}\n")
+```
+
 #### Show useful information about a given function
 ```python
 import sempy
