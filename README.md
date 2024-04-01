@@ -700,6 +700,15 @@ x = fabric.list_expressions(datasetName)
 x
 ```
 
+#### List the annotations within a given dataset (semantic model)
+```python
+import sempy
+import sempy.fabric as fabric
+datasetName = '' #Enter dataset name
+x = fabric.list_annotations(datasetName)
+x
+```
+
 #### Create a new blank semantic model
 ```python
 import sempy
