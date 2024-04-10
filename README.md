@@ -1140,7 +1140,7 @@ The following process dynamically creates the Power Query Template (.pqt) file s
 1. Connect the notebook to your lakehouse.
 2. Run the following command in a Fabric notebook to install the .whl file.
 ```python
-%pip install "https://raw.githubusercontent.com/m-kovalsky/Fabric/main/Direct%20Lake%20Migration/fabric_cat_tools-0.2.0-py3-none-any.whl"
+%pip install "%pip install "https://raw.githubusercontent.com/m-kovalsky/fabric_cat_tools/main/fabric_cat_tools-0.2.4-py3-none-any.whl""
 ```
 3. Run this code, specifying the semantic model name in the datasetName parameter.
 ```python
@@ -1157,35 +1157,4 @@ fct.create_pqt_file(datasetName)
  
 ## Direct Lake migration
 
-The following process automates the migration of an import/DirectQuery model to a new Direct Lake model. The first step is specifically applicable to models which use Power Query to perform data transformations. If your model does not use Power Query, you must migrate the base tables used in your semantic model to a Fabric lakehouse.
-
-### Prerequisites
-
-* Make sure you [enable XMLA Read/Write](https://learn.microsoft.com/power-bi/enterprise/service-premium-connect-tools#enable-xmla-read-write) for your capacity
-* Make sure you have a [lakehouse](https://learn.microsoft.com/fabric/onelake/create-lakehouse-onelake#create-a-lakehouse) in a Fabric workspace
-* Enable the following [setting](https://learn.microsoft.com/power-bi/transform-model/service-edit-data-models#enable-the-preview-feature): Workspace -> Workspace Settings -> General -> Data model settings -> Users can edit data models in the Power BI service
-
-### Instructions
-
-1. Download this [notebook](https://github.com/m-kovalsky/fabric_cat_tools/blob/main/Migration%20to%20Direct%20Lake.ipynb). **Use version 0.2.1 or higher only.**
-2. Make sure you are in the ['Data Engineering' persona](https://learn.microsoft.com/fabric/get-started/microsoft-fabric-overview#components-of-microsoft-fabric). Click the icon at the bottom left corner of your Workspace screen and select 'Data Engineering'
-3. In your workspace, select 'New -> Import notebook' and import the notebook from step 1.
-4. [Add your lakehouse](https://learn.microsoft.com/fabric/data-engineering/lakehouse-notebook-explore#add-or-remove-a-lakehouse) to your Fabric notebook
-5. Follow the instructions within the notebook.
-
-### The migration process
-
-*Note: The first 4 steps are only necessary if you have logic in Power Query. Otherwise, you will need to migrate your semantic model source tables to lakehouse tables.*
-1. The first step of the notebook creates a Power Query Template (.pqt) file which eases the migration of Power Query logic to Dataflows Gen2.
-2. After the .pqt file is created, sync files from your [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222), create a new Dataflows Gen2, and import the Power Query Template file.
-3. Manually map each table to its destination (your lakehouse).
-4. Publish the Dataflow Gen2 and wait for it to finish creating the delta lake tables in your lakehouse.
-5. Back in the notebook, the next step will create your new Direct Lake semantic model with the name of your choice, taking all the valuable properties from the orignal semantic model and refreshing/framing your new semantic model.
-6. Finally, you can easily rebind your all reports which use the import/DQ semantic model to the new Direct Lake semantic model in one click.
-
-### Completing these steps will do the following:
-* Offload your Power Query logic to Dataflows Gen2 inside of Fabric (where it can be maintained and development can continue).
-* Dataflows Gen2 will create delta tables in your Fabric lakehouse. These tables can then be used for your Direct Lake model.
-* Create a new semantic model in Direct Lake mode containing all the standard tables and columns, calculation groups, measures, relationships, hierarchies, roles, row level security, perspectives, and translations from your original semantic model.
-* Non-supported objects are not transferred (i.e. calculated columns, calculated tables, relationships using columns with unsupported data types etc.).
-* Reports used by your original semantic model will be rebinded to your new semantic model.
+The documentation for Direct Lake migration has been moved [here](https://github.com/m-kovalsky/fabric_cat_tools?tab=readme-ov-file#direct-lake-migration-1).
