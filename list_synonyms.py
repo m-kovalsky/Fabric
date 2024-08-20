@@ -1,3 +1,11 @@
+import sempy.fabric as fabric
+import sempy_labs
+from sempy_labs.tom import connect_semantic_model
+import pandas as pd
+import json
+from decimal import Decimal, ROUND_HALF_UP
+from typing import Optional
+
 def list_synonyms(dataset: str, workspace: Optional[str] = None):
 
     workspace = fabric.resolve_workspace_name(workspace)
