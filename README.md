@@ -1127,34 +1127,7 @@ def get_directlake_guardrails(skuSize):
 
 get_directlake_guardrails(sku_value)
 ```
-
-## Migrate Power Query logic to Dataflows Gen2
-
-Power Query logic can be migrated to Dataflows Gen2 by using a [Power Query Template](https://learn.microsoft.com/power-query/power-query-template) file and then importing that file into Dataflows Gen2. This will migrate all of your tables to Dataflows Gen2 in one swoop.
-
-The following process dynamically creates the Power Query Template (.pqt) file so you can import it into Dataflows Gen2 to create delta tables in your Fabric lakehouse.
-
-*Note: For multi-partitioned tables, this process will take just the first partition from the table. In the case of Incremental Refresh, it will take the Source Expression (M query) from the table and ignore the individual partitions.*
-
-### [Fabric Notebook](https://learn.microsoft.com/fabric/data-engineering/how-to-use-notebook)
-1. Connect the notebook to your lakehouse.
-2. Run the following command in a Fabric notebook to install the .whl file.
-```python
-%pip install "%pip install "https://raw.githubusercontent.com/m-kovalsky/fabric_cat_tools/main/fabric_cat_tools-0.2.4-py3-none-any.whl""
-```
-3. Run this code, specifying the semantic model name in the datasetName parameter.
-```python
-import fabric_cat_tools as fct
-datasetName = '' #Enter the import/DQ semantic model name
-fct.create_pqt_file(datasetName)
-```
-4. Make sure that you have installed [OneLake file explorer](https://www.microsoft.com/download/details.aspx?id=105222).
-5. Create a new Dataflow Gen2 within your Fabric workspace.
-6. Select the PowerQueryTemplate.pqt file created in step 3 (*note: you may have to right click on the folder in the Windows file explorer and select 'OneLake -> Sync from OneLake'*).
-7. Click 'Configure connection' to configure the connection to the data source.
-8. Select a destination for each table (your desired lakehouse).
-9. Click 'Publish'.
  
 ## Direct Lake migration
 
-The documentation for Direct Lake migration has been moved [here](https://github.com/m-kovalsky/fabric_cat_tools?tab=readme-ov-file#direct-lake-migration-1).
+The documentation for Direct Lake migration has been moved [here](https://github.com/microsoft/semantic-link-labs#direct-lake-migration).
