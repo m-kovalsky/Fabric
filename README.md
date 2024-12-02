@@ -9,6 +9,9 @@ Semantic-link library version 0.7.2 or higher
 ## Load the [Semantic Link](https://pypi.org/project/semantic-link/) and [Semantic Link Labs](https://github.com/microsoft/semantic-link-labs) libraries inside of your notebook
 ```python
 %pip install semantic-link-labs
+```
+
+```python
 import sempy_labs as labs
 import sempy.fabric as fabric
 ```
