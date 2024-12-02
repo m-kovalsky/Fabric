@@ -6,12 +6,14 @@ This repo is intended to help business intelligence analysts/developers and data
 ## Requirements
 Semantic-link library version 0.7.2 or higher
 
-## Load the [Semantic-Link](https://pypi.org/project/semantic-link/) library inside of your notebook
+## Load the [Semantic Link](https://pypi.org/project/semantic-link/) and [Semantic Link Labs](https://github.com/microsoft/semantic-link-labs) libraries inside of your notebook
 ```python
-%pip install semantic-link
+%pip install semantic-link-labs
+import sempy_labs as labs
+import sempy.fabric as fabric
 ```
 
-## Load Semantic-link into a custom Fabric environment
+## Load Semantic Link into a custom Fabric environment
 An even better way to ensure the Semantic-link library is available in your workspace/notebooks is to load it as a library in a custom Fabric environment. If you do this, you will not have to run the above '%pip install semantic-link' code every time in your notebook. Please follow the steps below to create an environment and load the Semantic-Link library.
 
 #### Create a custom environment
@@ -37,6 +39,7 @@ An even better way to ensure the Semantic-link library is available in your work
 ```python
 import sempy
 import sempy.fabric as fabric
+import sempy_labs as labs
 import pandas as pd
 import numpy as np
 import pyspark
@@ -410,12 +413,14 @@ x
 ```
 
 #### Rebind a report to a dataset
-* First run [this](https://github.com/m-kovalsky/Fabric/blob/main/ReportRebind.py) code to create the report_rebind function.
 ```python
-reportName = '' #Enter the report name
-datasetName = '' #Enter the dataset name
+import sempy_labs.report as rep
+report_name = '' #Enter the report name
+dataset_name = '' #Enter the dataset name
+report_workspace = None
+dataset_workspace = None
 for item in report_list:
-    report_rebind(reportName, datasetName)
+    report_rebind(report=report_name, dataset=dataset_name, report_workspace=report_workspace, dataset_workspace=dataset_workspace)
 ```
 
 #### Rebind a list of reports to a single dataset
