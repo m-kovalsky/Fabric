@@ -309,27 +309,27 @@ load_table(
 ```python
 import sempy
 import sempy.fabric as fabric
-x = fabric.list_items()
-x
+workspace = None #Enter the name of your workspace
+df = fabric.list_items(workspace=workspace)
+df
 ```
 
 #### Shows a list of your accessible workspaces, sorted alphabetically
 ```python
 import sempy
 import sempy.fabric as fabric
-x = fabric.list_workspaces().sort_values(by='Name', ascending=True)
-x
+df = fabric.list_workspaces().sort_values(by='Name', ascending=True)
+df
 ```
 
 #### Filter to a particular workspace
 ```python
 import sempy
 import sempy.fabric as fabric
-workspaceName = '' #Enter the workspace name to be used as a filter
-x = fabric.list_workspaces()
-filter_condition = [workspaceName]
-x = x[x['Name'].isin(filter_condition)]
-x
+workspace_name = '' #Enter the workspace name to be used as a filter
+dfW = fabric.list_workspaces()
+dfW_filt = dfW[dfW['Name'].isin([workspace_name])]
+dfW_filt
 ```
 
 #### Filter to a particular workspace and extract the value
@@ -363,8 +363,8 @@ x
 ```python
 import sempy
 import sempy.fabric as fabric
-x = '' #Enter the workspace name
-id = fabric.resolve_workspace_id(x)
+workspace = '' #Enter the workspace name
+id = fabric.resolve_workspace_id(workspace=workspace)
 id
 ```
 
@@ -381,8 +381,19 @@ x
 ```python
 import sempy
 import sempy.fabric as fabric
-x = fabric.get_workspace_id()
-x
+fabric.get_workspace_id()
+```
+
+#### Assign a workspace to a capacity
+```python
+import sempy_labs as labs
+labs.assign_workspace_to_capacity(capacity_name='new capacity', workspace='Workspace to be moved')
+```
+
+#### Add a user to a workspace
+```python
+import sempy_labs as labs
+labs.add_user_to_workspace(email_address='hello@goodbye.com', role_name='Member', workspace='test workspace')
 ```
 
 ## Apps
