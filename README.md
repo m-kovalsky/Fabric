@@ -56,7 +56,6 @@ from powerbiclient import Report
 
 #### Show the directory of all SemPy functions
 ```python
-import sempy
 import sempy.fabric
 dir(sempy.fabric)
 ```
@@ -64,7 +63,6 @@ dir(sempy.fabric)
 #### Show all functions in a given Python library
 ```python
 import inspect
-import sempy
 import sempy.fabric as fabric
 
 all_members = inspect.getmembers(fabric) #Enter the library alias
@@ -76,7 +74,6 @@ for name, member in all_members:
 ### Show all functions in a given Python library and their respective parameters
 ```python
 import inspect
-import sempy
 import sempy.fabric as fabric
 
 functions = inspect.getmembers(fabric,inspect.isfunction) #Enter the library alias
@@ -89,7 +86,6 @@ for name, func in functions:
 
 #### Show useful information about a given function
 ```python
-import sempy
 import sempy.fabric as fabric
 help(fabric.list_datasets) #Replace 'list_datasets' within any function shown in dir(sempy.fabric) output
 ```
@@ -144,34 +140,31 @@ display(df)
 
 #### Refresh the TOM cache. If the semantic model has been updated during your notebook session, run this script to ensure you get the latest model metadata.
 ```python
-import sempy
 import sempy.fabric as fabric
-fabric.refresh_tom_cache()
+workspace = None # Enter the name or ID of the workspace
+fabric.refresh_tom_cache(workspace=workspace)
 ```
 
 ## Capacities
 
 #### Show a list of all accessible capacities
 ```python
-import sempy
 import sempy.fabric as fabric
-x = fabric.list_capacities()
-x
+df = fabric.list_capacities()
+df
 ```
 
 #### Gets the Artifact ID (of the notebook)
 ```python
-import sempy
 import sempy.fabric as fabric
-x = fabric.get_artifact_id()
-x
+df = fabric.get_artifact_id()
+df
 ```
 
 ## Lakehouse
 
 #### Gets the Lakehouse ID from the current lakehouse
 ```python
-import sempy
 import sempy.fabric as fabric
 x = fabric.get_lakehouse_id()
 x
@@ -179,7 +172,6 @@ x
 
 #### Gets the SQL Endpoint for a given workspace/lakehouse
 ```python
-import sempy
 import sempy.fabric as fabric
 import pandas as pd
 
@@ -210,7 +202,6 @@ get_sql_endpoint()
 
 #### Show a list of the tables in your lakehouse using the [List Tables API](https://learn.microsoft.com/rest/api/fabric/lakehouse/tables/list-tables?tabs=HTTP)
 ```python
-import sempy
 import sempy.fabric as fabric
 import pandas as pd
 import json
@@ -248,7 +239,6 @@ get_lakehouse_tables()
 
 #### Load a parquet or csv file within your lakehouse as a delta table in your lakehouse
 ```python
-import sempy
 import sempy.fabric as fabric
 import pandas as pd
 import os
@@ -307,7 +297,6 @@ load_table(
 
 #### Show a list of all objects in your workspace
 ```python
-import sempy
 import sempy.fabric as fabric
 workspace = None #Enter the name of your workspace
 df = fabric.list_items(workspace=workspace)
@@ -316,7 +305,6 @@ df
 
 #### Shows a list of your accessible workspaces, sorted alphabetically
 ```python
-import sempy
 import sempy.fabric as fabric
 df = fabric.list_workspaces().sort_values(by='Name', ascending=True)
 df
@@ -324,7 +312,6 @@ df
 
 #### Filter to a particular workspace
 ```python
-import sempy
 import sempy.fabric as fabric
 workspace_name = '' #Enter the workspace name to be used as a filter
 dfW = fabric.list_workspaces()
@@ -334,7 +321,6 @@ dfW_filt
 
 #### Filter to a particular workspace and extract the value
 ```python
-import sempy
 import sempy.fabric as fabric
 workspaceName = '' #Enter the workspace name to be used as a filter
 x = fabric.list_workspaces()
@@ -347,7 +333,6 @@ z
 
 #### Show the Capacity SKU, Region, State for your workspaces
 ```python
-import sempy
 import sempy.fabric as fabric
 import pandas as pd
 
@@ -361,7 +346,6 @@ x
 
 #### Find the workspace ID for a given workspace name
 ```python
-import sempy
 import sempy.fabric as fabric
 workspace = '' #Enter the workspace name
 id = fabric.resolve_workspace_id(workspace=workspace)
@@ -370,16 +354,14 @@ id
 
 #### Find the workspace name for a given workspace ID
 ```python
-import sempy
 import sempy.fabric as fabric
-id = '' #Enter the workspace ID
-x = fabric.resolve_workspace_name(id)
-x
+workspace_id = '' #Enter the workspace ID
+workspace_name = fabric.resolve_workspace_name(workspace_id)
+workspace_name
 ```
 
 #### Get the current workspace ID
 ```python
-import sempy
 import sempy.fabric as fabric
 fabric.get_workspace_id()
 ```
@@ -410,7 +392,6 @@ x
 
 #### Shows a list of gateways within the workspace
 ```python
-import sempy
 import sempy.fabric as fabric
 x = fabric.list_gateways()
 x
@@ -420,7 +401,6 @@ x
 
 #### Shows a list of reports within the workspace
 ```python
-import sempy
 import sempy.fabric as fabric
 x = fabric.list_reports()
 x
@@ -448,7 +428,6 @@ for item in report_list:
 
 #### Visualize a Power BI Report within a Fabric notebook
 ```python
-import sempy
 import sempy.fabric as fabric
 from powerbiclient import Report
 
@@ -468,47 +447,15 @@ launch_report('') #Enter report name
 
 #### List dashboards in a given workspace
 ```python
-import sempy
-import sempy.fabric as fabric
-import json
-import pandas as pd
-
-def list_dashboards(workspaceName=None):
-
-    df = pd.DataFrame(columns=['Dashboard ID', 'Dashboard Name', 'Read Only', 'Web URL', 'Embed URL', 'Data Classification'])
-
-    if workspaceName == 'None':
-        groupId = fabric.get_workspace_id()
-    else:
-        groupId = fabric.resolve_workspace_id(workspaceName)
-
-    client = fabric.PowerBIRestClient()
-    response = client.get(f"/v1.0/myorg/groups/{groupId}/dashboards")
-    responseJson = response.json()
-
-    for v in responseJson['value']:
-        dashboardID = v['id']
-        displayName = v['displayName']
-        isReadOnly = v['isReadOnly']
-        webURL = v['webUrl']
-        embedURL = v['embedUrl']
-        dataClass = v['dataClassification']
-
-        new_data = {'Dashboard ID': dashboardID, 'Dashboard Name': displayName, 'Read Only': isReadOnly, 'Web URL': webURL, 'Embed URL': embedURL, 'Data Classification': dataClass}
-        df = pd.concat([df, pd.DataFrame(new_data, index=[0])], ignore_index=True) 
-
-    df['Read Only'] = df['Read Only'].astype(bool)
-
-    return df
-
-list_dashboards()
+import sempy_labs as labs
+workspace = None # Enter the name or ID of the workspace
+labs.list_dashboards(workspace=workspace)
 ```
 
 ## Dataset and dataset objects
 
 #### Shows a list of datasets in your current workspace
 ```python
-import sempy
 import sempy.fabric as fabric
 x = fabric.list_datasets()
 x
@@ -516,7 +463,6 @@ x
 
 #### Shows a list of datasets in your current workspace with additional properties
 ```python
-import sempy
 import sempy.fabric as fabric
 x = fabric.list_datasets(additional_xmla_properties=['Model.DefaultMode', 'Model.DirectLakeBehavior', 'CompatibilityLevel'])
 x
@@ -524,7 +470,6 @@ x
 
 #### Shows the dataset ID for a given dataset name
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter your dataset name
 x = fabric.list_datasets()
@@ -535,7 +480,6 @@ datasetID
 
 #### Shows the [TMSL](https://learn.microsoft.com/analysis-services/tmsl/tabular-model-scripting-language-tmsl-reference?view=asallproducts-allversions) for a given dataset
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter your dataset name
 workspaceName = '' #Enter your workspace name
@@ -545,7 +489,6 @@ print(x)
 
 #### List the data sources within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_datasources(datasetName)
@@ -554,7 +497,6 @@ x
 
 #### List the tables within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_tables(datasetName)
@@ -563,7 +505,6 @@ x
 
 #### List the columns within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_columns(datasetName)
@@ -572,7 +513,6 @@ x
 
 #### List the partitions within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_partitions(datasetName)
@@ -581,7 +521,6 @@ x
 
 #### List the partitions within a given dataset (semantic model) and properly format the Query column
 ```python
-import sempy
 import sempy.fabric as fabric
 import pandas as pd
 
@@ -597,7 +536,6 @@ x_styled
 
 #### List the tables of a Direct Lake semantic model and show the lakehouse table from which it derives ('Query')
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 
@@ -608,7 +546,6 @@ dfP_filtered
 
 #### List the measures within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_measures(datasetName)
@@ -617,7 +554,6 @@ x
 
 #### List the measures within a given dataset (semantic model) and properly format the Measure Expression column
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_measures(datasetName)
@@ -631,7 +567,6 @@ x_styled
 
 #### List the hierarchies within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_hierarchies(datasetName)
@@ -640,7 +575,6 @@ x
 
 #### List the relationships within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_relationships(datasetName)
@@ -649,7 +583,6 @@ x
 
 #### Plot the relationships for a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 relationships = fabric.list_relationships(datasetName)
@@ -658,7 +591,6 @@ plot_relationship_metadata(relationships)
 
 #### List the roles within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.get_roles(datasetName)
@@ -667,7 +599,6 @@ x
 
 #### List the roles and role members within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.get_roles(dataset = datasetName, include_members = True)
@@ -676,7 +607,6 @@ x
 
 #### List the row level security (RLS) for each role within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.get_row_level_security_permissions(datasetName)
@@ -685,7 +615,6 @@ x
 
 #### List the calculation groups and calculation items within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_calculation_items(datasetName)
@@ -694,7 +623,6 @@ x
 
 #### List the perspectives and perspective objects within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_perspectives(datasetName)
@@ -703,7 +631,6 @@ x
 
 #### List the translations within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_translations(datasetName)
@@ -712,7 +639,6 @@ x
 
 #### List the expressions (parameters) within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_expressions(datasetName)
@@ -721,7 +647,6 @@ x
 
 #### List the annotations within a given dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_annotations(datasetName)
@@ -730,7 +655,6 @@ x
 
 #### Create a new blank semantic model
 ```python
-import sempy
 import sempy.fabric as fabric
 
 def create_blank_semantic_model(datasetName, compatibilityLevel = 1604, workspaceName = None):
@@ -768,15 +692,14 @@ Valid options for refresh_type: 'full', 'automatic', 'dataOnly', 'calculate', 'c
 
 #### Refresh a dataset
 ```python
-import sempy
-import sempy.fabric as fabric
-datasetName = '' #Enter dataset name
-fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full')
+import sempy_labs as labs
+dataset = ''
+workspace = None
+labs.refresh_semantic_model(dataset=dataset, workspace=workspace, refresh_type="full")
 ```
 
 #### Refresh specific table(s) in a dataset
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 my_objects = [
@@ -788,7 +711,6 @@ fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = m
 
 #### Refresh specific partition(s) in a dataset
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 my_objects = [
@@ -800,7 +722,6 @@ fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = m
 
 #### Refresh a combination of tables/partition(s) in a dataset
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 my_objects = [
@@ -812,7 +733,6 @@ fabric.refresh_dataset(dataset = datasetName, refresh_type = 'full', objects = m
 
 #### Show refresh requests for a given dataset
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 x = fabric.list_refresh_requests(datasetName)
@@ -823,7 +743,6 @@ x
 
 #### Show a preview of the data in a given table from a dataset (semantic model)
 ```python
-import sempy
 import sempy.fabric as fabric
 datasetName = '' #Enter dataset name
 tableName = '' #Enter table name
@@ -836,22 +755,18 @@ x
 
 #### Connect to the [Tabular Object Model](https://learn.microsoft.com/analysis-services/tom/introduction-to-the-tabular-object-model-tom-in-analysis-services-amo?view=asallproducts-allversions) ([TOM](https://learn.microsoft.com/dotnet/api/microsoft.analysisservices.tabular.model?view=analysisservices-dotnet)); prints each table name
 ```python
-import sempy
-import sempy.fabric as fabric
+import sempy_labs as labs
 
 workspaceName = '' #Enter workspace name
 datasetName = '' #Enter dataset name
 
-tom_server = fabric.create_tom_server(readonly=True, workspace=workspaceName)
-m = tom_server.Databases.GetByName(datasetName).Model
-
-for t in m.Tables:
-    print(t.Name)
+with connect_semantic_model(dataset=dataset, workspace=workspace) as tom:
+    for t in tom.model.Tables:
+        print(t.Name)
 ```
 
 #### Create a new measure in a semantic model
 ```python
-import sempy
 import sempy.fabric as fabric
 sempy.fabric._client._utils._init_analysis_services()
 import Microsoft.AnalysisServices.Tabular as TOM
